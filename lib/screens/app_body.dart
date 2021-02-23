@@ -748,11 +748,18 @@ class _AllHomepageState extends State<AllHomepage> {
                                     Container(
                                       margin:
                                           EdgeInsets.only(top: 70, bottom: 28),
-                                      child: Center(
-                                        child: Text(
-                                          'Saltar este paso',
-                                          style: TextStyle(
-                                              color: _colorInactiveOption),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _currentScreen = 12;
+                                          });
+                                        },
+                                        child: Center(
+                                          child: Text(
+                                            'Saltar este paso',
+                                            style: TextStyle(
+                                                color: _colorInactiveOption),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -928,12 +935,21 @@ class _AllHomepageState extends State<AllHomepage> {
                                   ],
                                 ),
                                 // BTN CONTACTAR
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 14),
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: PrimaryButton(
-                                      btnText: 'CONTACTAR',
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      print('Contactar');
+                                      _currentScreen = 21;
+                                      _selectedOption = 2;
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 14),
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: PrimaryButton(
+                                        btnText: 'CONTACTAR',
+                                      ),
                                     ),
                                   ),
                                 ),
