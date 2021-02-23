@@ -1,0 +1,536 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:repara_latam/screens/app_body.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  final exampleConst = BoxShadow(
+    color: Colors.grey.withOpacity(0.1),
+    spreadRadius: 0,
+    blurRadius: 7,
+    offset: Offset(3, 3),
+  );
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    return MaterialApp(
+      //debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Container(
+          child: AllLogin(),
+        ),
+      ),
+    );
+  }
+}
+
+class AllLogin extends StatefulWidget {
+  @override
+  _AllLoginState createState() => _AllLoginState();
+}
+
+class _AllLoginState extends State<AllLogin> {
+  // Login States:
+  //
+  // 0: First Screen
+  // 10: Registrarse
+  // 11: Validación
+  // 20: Entrar
+  // 21: Recuperar contraseña
+  // 30: Creando cuenta
+
+  int _pageState = 0;
+
+  double _windowWidth = 0;
+  double _windowHeight = 0;
+
+  double _firstScreenXOffset = 0;
+  double _registrarseXOffset = 0;
+  double _validacionXOffset = 0;
+  double _entrarXOffset = 0;
+
+  bool _tACCheckbox = false;
+
+  @override
+  Widget build(BuildContext context) {
+    _windowHeight = MediaQuery.of(context).size.height;
+    _windowWidth = MediaQuery.of(context).size.width;
+
+    switch (_pageState) {
+      case 0:
+        _firstScreenXOffset = 0;
+        _registrarseXOffset = _windowWidth;
+        _validacionXOffset = _windowWidth;
+        _entrarXOffset = _windowWidth;
+        break;
+      case 10:
+        _firstScreenXOffset = -_windowWidth;
+        _registrarseXOffset = 0;
+        _validacionXOffset = _windowWidth;
+        break;
+      case 11:
+        _firstScreenXOffset = -_windowWidth;
+        _registrarseXOffset = -_windowWidth;
+        _validacionXOffset = 0;
+        break;
+      case 20:
+        _firstScreenXOffset = -_windowWidth;
+        _entrarXOffset = 0;
+        break;
+    }
+
+    Future<bool> onWillPop() {
+      switch (_pageState) {
+        case 0:
+          break;
+        case 10:
+          setState(() {
+            _pageState = 0;
+          });
+          break;
+        case 11:
+          setState(() {
+            _pageState = 10;
+          });
+          break;
+        case 20:
+          setState(() {
+            _pageState = 0;
+          });
+          break;
+      }
+      print(_pageState);
+    }
+
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/login_bg_medium_compressed.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // FIRST SCREEN
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 1000),
+                  curve: Curves.fastLinearToSlowEaseIn,
+                  transform:
+                      Matrix4.translationValues(_firstScreenXOffset, 0, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // LOGO
+                      Container(
+                        height: 140,
+                        //flex: 2,
+                        child: Image.asset("assets/images/logo_square.png"),
+                      ),
+                      // SEPARATION
+                      Expanded(
+                        flex: 2,
+                        child: Container(),
+                      ),
+                      // Lower third
+                      Column(
+                        children: [
+                          Container(
+                            width: 190,
+                            child: Text(
+                              'Conecta con individuos ansiosos por darle una segunda oportunidad a tus pertenencias',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white.withOpacity(0.77),
+                                  height: 1.5,
+                                  letterSpacing: 1.9),
+                            ),
+                          ),
+                          // BTN SIGN UP
+                          Container(
+                            margin: EdgeInsets.only(top: 21),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _pageState = 10;
+                                });
+                              },
+                              child: Container(
+                                //margin: EdgeInsets.symmetric(vertical: 14, horizontal: 56),
+                                padding: EdgeInsets.all(21),
+                                width: MediaQuery.of(context).size.width / 1.4,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 0,
+                                      blurRadius: 7,
+                                      offset: Offset(3, 3),
+                                    )
+                                  ],
+                                  color: Color(0xFFBFF4949),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'REGISTRARSE',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 21),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // BTN SIGN IN
+                          Container(
+                            margin: EdgeInsets.only(top: 21),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _pageState = 20;
+                                });
+                              },
+                              child: Container(
+                                //margin: EdgeInsets.symmetric(vertical: 14, horizontal: 56),
+                                padding: EdgeInsets.all(21),
+                                width: MediaQuery.of(context).size.width / 1.4,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 0,
+                                      blurRadius: 7,
+                                      offset: Offset(3, 3),
+                                    )
+                                  ],
+                                  color: Colors.white,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'ENTRAR',
+                                    style: TextStyle(
+                                        color: Color(0xFFBFF4949),
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 21),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 21, bottom: 21),
+                            width: 35,
+                            height: 35,
+                            padding: EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child:
+                                Image.asset("assets/images/google_small.png"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // REGISTRARSE
+                Center(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.fastLinearToSlowEaseIn,
+                    height: MediaQuery.of(context).size.height * 0.54,
+                    width: MediaQuery.of(context).size.width * 0.91,
+                    transform:
+                        Matrix4.translationValues(_registrarseXOffset, 0, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // HEADER
+                        Container(
+                          width: double.infinity,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF021028),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(21),
+                              topRight: Radius.circular(21),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Nueva Cuenta',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 7),
+                            ),
+                          ),
+                        ),
+                        InputWithIcon(
+                          icon: Icons.email_outlined,
+                          hint: 'Email',
+                        ),
+                        InputWithIcon(
+                          icon: Icons.person_outline,
+                          hint: 'Usuario',
+                        ),
+                        InputWithIcon(
+                          icon: Icons.lock_outline_rounded,
+                          hint: 'Contraseña',
+                        ),
+                        // TaC CHECKBOX
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Checkbox(
+                                value: _tACCheckbox,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _tACCheckbox = value;
+                                  });
+                                }),
+                            Flexible(
+                              child: Container(
+                                width: 210,
+                                child: Text(
+                                    'He leído y acepto los términos y condiciones de uso.'),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // BTN SIGUIENTE
+                        Container(
+                          margin: EdgeInsets.only(bottom: 21),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _pageState = 11;
+                              });
+                            },
+                            child: PrimaryButton(
+                              btnText: 'SIGUIENTE',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // AGUARDANDO VALIDACIÓN
+                Center(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.fastLinearToSlowEaseIn,
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.91,
+                    transform:
+                        Matrix4.translationValues(_validacionXOffset, 0, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // HEADER
+                        Container(
+                          width: double.infinity,
+                          height: 91,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF021028),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(21),
+                              topRight: Radius.circular(21),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Aguardando Validación',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 7),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            width: 280,
+                            child: Center(
+                              child: Text(
+                                'Hemos enviado un correo de confirmación a tu email. Por favor ábrelo y haz click en el enlace para continuar.',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // ENTRAR
+                Center(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.fastLinearToSlowEaseIn,
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.91,
+                    transform: Matrix4.translationValues(_entrarXOffset, 0, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // HEADER
+                        Container(
+                          width: double.infinity,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF021028),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(21),
+                              topRight: Radius.circular(21),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '¡Bienvenido!',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 7),
+                            ),
+                          ),
+                        ),
+                        InputWithIcon(
+                          icon: Icons.person_outline,
+                          hint: 'Usuario o Contraseña',
+                        ),
+                        InputWithIcon(
+                          icon: Icons.lock_outline_rounded,
+                          hint: 'Contraseña',
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 21),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => AppBody()));
+                            },
+                            child: PrimaryButton(
+                              btnText: 'ENTRAR',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+}
+
+class PrimaryButton extends StatefulWidget {
+  final String btnText;
+  PrimaryButton({this.btnText});
+
+  @override
+  _PrimaryButtonState createState() => _PrimaryButtonState();
+}
+
+class _PrimaryButtonState extends State<PrimaryButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //margin: EdgeInsets.symmetric(vertical: 14, horizontal: 56),
+      padding: EdgeInsets.all(21),
+      height: 70,
+      width: MediaQuery.of(context).size.width / 1.4,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 7,
+            offset: Offset(3, 3),
+          )
+        ],
+        color: Color(0xFFBFF4949),
+      ),
+      child: Center(
+        child: Text(
+          widget.btnText,
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.w700, fontSize: 21),
+        ),
+      ),
+    );
+  }
+}
+
+class InputWithIcon extends StatefulWidget {
+  final IconData icon;
+  final String hint;
+  InputWithIcon({this.icon, this.hint});
+
+  @override
+  _InputWithIconState createState() => _InputWithIconState();
+}
+
+class _InputWithIconState extends State<InputWithIcon> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width / 1.4,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            width: 2,
+            color: Color(0xFFBFF4949),
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            margin: EdgeInsets.only(right: 21),
+            child: Icon(widget.icon),
+          ),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                  border: InputBorder.none, hintText: widget.hint),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
