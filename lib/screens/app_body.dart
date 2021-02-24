@@ -128,7 +128,8 @@ class _AllHomepageState extends State<AllHomepage> {
     }
 
     signOut() {
-      auth.signOut().then((value) => Navigator.of(context).pop());
+      auth.signOut().then((value) => Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => MyApp())));
     }
 
     Future<bool> onWillPopOptions() {

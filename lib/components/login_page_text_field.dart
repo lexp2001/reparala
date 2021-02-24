@@ -22,7 +22,7 @@ class InputWithIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width / 1.4,
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(

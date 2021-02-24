@@ -91,13 +91,19 @@ class _AllLoginState extends State<AllLogin> {
     super.dispose();
   }
 
+  triggerEmailVerification() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      checkEmailVerified();
+    });
+  }
+
   Future<void> checkEmailVerified() async {
     user = auth.currentUser;
     await user.reload();
     if (user.emailVerified) {
       timer.cancel();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => AllHomepage()));
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => AppBody()));
     }
   }
 
@@ -305,7 +311,7 @@ class _AllLoginState extends State<AllLogin> {
                       borderRadius: BorderRadius.circular(21),
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // HEADER
                         Container(
@@ -329,70 +335,83 @@ class _AllLoginState extends State<AllLogin> {
                             ),
                           ),
                         ),
-                        InputWithIcon(
-                          controller: _emailController,
-                          icon: Icons.email_outlined,
-                          hint: 'Email',
-                          obscure: false,
-                          onChanged: (value) {},
-                        ),
-                        InputWithIcon(
-                          controller: _usernameController,
-                          icon: Icons.person_outline,
-                          hint: 'Usuario',
-                          obscure: false,
-                          onChanged: (value) {},
-                        ),
-                        InputWithIcon(
-                          controller: _passwordController,
-                          icon: Icons.lock_outline_rounded,
-                          hint: 'Contraseña',
-                          obscure: true,
-                          onChanged: (value) {},
-                        ),
-                        // TaC CHECKBOX
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Checkbox(
-                                value: _tACCheckbox,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _tACCheckbox = value;
-                                  });
-                                }),
-                            Flexible(
-                              child: Container(
-                                width: 210,
-                                child: Text(
-                                    'He leído y acepto los términos y condiciones de uso.'),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // BTN SIGUIENTE
-                        Container(
-                          margin: EdgeInsets.only(bottom: 21),
-                          child: GestureDetector(
-                            onTap: () {
-                              //;
-                              //print(_emailController);
-                              auth
-                                  .createUserWithEmailAndPassword(
-                                      email: _emailController.text,
-                                      password: _passwordController.text)
-                                  .then((_) {
-                                print('User created');
-                                setState(() {
-                                  _pageState = 11;
-                                });
-                                user.sendEmailVerification().then((value) =>
-                                    print('Verification email sent'));
-                              });
-                            },
-                            child: PrimaryButton(
-                              btnText: 'SIGUIENTE',
+                        // BODY
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 35),
+                            child: Column(
+                              children: [
+                                InputWithIcon(
+                                  controller: _emailController,
+                                  icon: Icons.email_outlined,
+                                  hint: 'Email',
+                                  obscure: false,
+                                  onChanged: (value) {},
+                                ),
+                                InputWithIcon(
+                                  controller: _usernameController,
+                                  icon: Icons.person_outline,
+                                  hint: 'Usuario',
+                                  obscure: false,
+                                  onChanged: (value) {},
+                                ),
+                                InputWithIcon(
+                                  controller: _passwordController,
+                                  icon: Icons.lock_outline_rounded,
+                                  hint: 'Contraseña',
+                                  obscure: true,
+                                  onChanged: (value) {},
+                                ),
+                                // TaC CHECKBOX
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Checkbox(
+                                        value: _tACCheckbox,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _tACCheckbox = value;
+                                          });
+                                        }),
+                                    Flexible(
+                                      child: Container(
+                                        width: 210,
+                                        child: Text(
+                                            'He leído y acepto los términos y condiciones de uso.'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Expanded(child: Container()),
+                                // BTN SIGUIENTE
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 21),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      //;
+                                      //print(_emailController);
+                                      auth
+                                          .createUserWithEmailAndPassword(
+                                              email: _emailController.text,
+                                              password:
+                                                  _passwordController.text)
+                                          .then((_) {
+                                        print('User created');
+                                        setState(() {
+                                          _pageState = 11;
+                                        });
+                                        user.sendEmailVerification().then((_) {
+                                          print('Verification email sent');
+                                          triggerEmailVerification();
+                                        });
+                                      });
+                                    },
+                                    child: PrimaryButton(
+                                      btnText: 'SIGUIENTE',
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -467,7 +486,7 @@ class _AllLoginState extends State<AllLogin> {
                       borderRadius: BorderRadius.circular(21),
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // HEADER
                         Container(
@@ -482,13 +501,12 @@ class _AllLoginState extends State<AllLogin> {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              auth
-                                  .signInAnonymously()
-                                  .then((value) => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => AppBody(),
-                                        ),
-                                      ));
+                              auth.signInAnonymously().then((value) =>
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => AppBody(),
+                                    ),
+                                  ));
                             },
                             child: Center(
                               child: Text(
@@ -502,32 +520,64 @@ class _AllLoginState extends State<AllLogin> {
                             ),
                           ),
                         ),
-                        InputWithIcon(
-                          controller: _emailController,
-                          icon: Icons.person_outline,
-                          hint: 'Usuario o Email',
-                          obscure: false,
-                          onChanged: (value) {},
-                        ),
-                        InputWithIcon(
-                          controller: _passwordController,
-                          icon: Icons.lock_outline_rounded,
-                          hint: 'Contraseña',
-                          obscure: true,
-                          onChanged: (value) {},
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 21),
-                          child: GestureDetector(
-                            onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => AppBody()));
-                              auth.signInWithEmailAndPassword(
-                                  email: _emailController.text,
-                                  password: _passwordController.text);
-                            },
-                            child: PrimaryButton(
-                              btnText: 'ENTRAR',
+                        // BODY
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 35),
+                            child: Column(
+                              children: [
+                                InputWithIcon(
+                                  controller: _emailController,
+                                  icon: Icons.person_outline,
+                                  hint: 'Email',
+                                  obscure: false,
+                                  onChanged: (value) {},
+                                ),
+                                InputWithIcon(
+                                  controller: _passwordController,
+                                  icon: Icons.lock_outline_rounded,
+                                  hint: 'Contraseña',
+                                  obscure: true,
+                                  onChanged: (value) {},
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(vertical: 14),
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(
+                                      '¿Olvidaste tu contraseña?',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(),
+                                ),
+                                // BTN ENTRAR
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 21),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      auth
+                                          .signInWithEmailAndPassword(
+                                              email: _emailController.text,
+                                              password:
+                                                  _passwordController.text)
+                                          .then((value) {
+                                        Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AppBody()));
+                                      });
+                                    },
+                                    child: PrimaryButton(
+                                      btnText: 'ENTRAR',
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
