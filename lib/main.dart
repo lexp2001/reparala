@@ -1,8 +1,16 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:repara_latam/screens/app_body.dart';
 
-void main() {
+import 'components/login_page_text_field.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -35,6 +43,17 @@ class AllLogin extends StatefulWidget {
 }
 
 class _AllLoginState extends State<AllLogin> {
+  String _email, _password;
+
+  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  final auth = FirebaseAuth.instance;
+
+  User user;
+  Timer timer;
+
   // Login States:
   //
   // 0: First Screen
@@ -55,6 +74,32 @@ class _AllLoginState extends State<AllLogin> {
   double _entrarXOffset = 0;
 
   bool _tACCheckbox = false;
+
+  @override
+  void initState() {
+    user = auth.currentUser;
+    //
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    _emailController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> checkEmailVerified() async {
+    user = auth.currentUser;
+    await user.reload();
+    if (user.emailVerified) {
+      timer.cancel();
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => AllHomepage()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -228,6 +273,7 @@ class _AllLoginState extends State<AllLogin> {
                               ),
                             ),
                           ),
+                          // GOOGLE SIGN UP
                           Container(
                             margin: EdgeInsets.only(top: 21, bottom: 21),
                             width: 35,
@@ -284,16 +330,25 @@ class _AllLoginState extends State<AllLogin> {
                           ),
                         ),
                         InputWithIcon(
+                          controller: _emailController,
                           icon: Icons.email_outlined,
                           hint: 'Email',
+                          obscure: false,
+                          onChanged: (value) {},
                         ),
                         InputWithIcon(
+                          controller: _usernameController,
                           icon: Icons.person_outline,
                           hint: 'Usuario',
+                          obscure: false,
+                          onChanged: (value) {},
                         ),
                         InputWithIcon(
+                          controller: _passwordController,
                           icon: Icons.lock_outline_rounded,
                           hint: 'Contraseña',
+                          obscure: true,
+                          onChanged: (value) {},
                         ),
                         // TaC CHECKBOX
                         Row(
@@ -321,8 +376,19 @@ class _AllLoginState extends State<AllLogin> {
                           margin: EdgeInsets.only(bottom: 21),
                           child: GestureDetector(
                             onTap: () {
-                              setState(() {
-                                _pageState = 11;
+                              //;
+                              //print(_emailController);
+                              auth
+                                  .createUserWithEmailAndPassword(
+                                      email: _emailController.text,
+                                      password: _passwordController.text)
+                                  .then((_) {
+                                print('User created');
+                                setState(() {
+                                  _pageState = 11;
+                                });
+                                user.sendEmailVerification().then((value) =>
+                                    print('Verification email sent'));
                               });
                             },
                             child: PrimaryButton(
@@ -414,31 +480,51 @@ class _AllLoginState extends State<AllLogin> {
                               topRight: Radius.circular(21),
                             ),
                           ),
-                          child: Center(
-                            child: Text(
-                              '¡Bienvenido!',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 7),
+                          child: GestureDetector(
+                            onTap: () {
+                              auth
+                                  .signInAnonymously()
+                                  .then((value) => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => AppBody(),
+                                        ),
+                                      ));
+                            },
+                            child: Center(
+                              child: Text(
+                                '¡Bienvenido!',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 7),
+                              ),
                             ),
                           ),
                         ),
                         InputWithIcon(
+                          controller: _emailController,
                           icon: Icons.person_outline,
-                          hint: 'Usuario o Contraseña',
+                          hint: 'Usuario o Email',
+                          obscure: false,
+                          onChanged: (value) {},
                         ),
                         InputWithIcon(
+                          controller: _passwordController,
                           icon: Icons.lock_outline_rounded,
                           hint: 'Contraseña',
+                          obscure: true,
+                          onChanged: (value) {},
                         ),
                         Container(
                           margin: EdgeInsets.only(bottom: 21),
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AppBody()));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => AppBody()));
+                              auth.signInWithEmailAndPassword(
+                                  email: _emailController.text,
+                                  password: _passwordController.text);
                             },
                             child: PrimaryButton(
                               btnText: 'ENTRAR',
@@ -490,46 +576,6 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w700, fontSize: 21),
         ),
-      ),
-    );
-  }
-}
-
-class InputWithIcon extends StatefulWidget {
-  final IconData icon;
-  final String hint;
-  InputWithIcon({this.icon, this.hint});
-
-  @override
-  _InputWithIconState createState() => _InputWithIconState();
-}
-
-class _InputWithIconState extends State<InputWithIcon> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width / 1.4,
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            width: 2,
-            color: Color(0xFFBFF4949),
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(right: 21),
-            child: Icon(widget.icon),
-          ),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none, hintText: widget.hint),
-            ),
-          )
-        ],
       ),
     );
   }

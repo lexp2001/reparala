@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "428039771359",
+    "project_id": "repara-latam",
+    "storage_bucket": "repara-latam.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428039771359:android:c11b2cf025d527372c856a",
+        "android_client_info": {
+          "package_name": "app.repara_latam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "428039771359-qqtrjvsakv0op3tc1hvehpbofqsdb7k7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyMYNjvF5ORgiWDleN0A0iJHSrTH9_W-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "428039771359-qqtrjvsakv0op3tc1hvehpbofqsdb7k7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

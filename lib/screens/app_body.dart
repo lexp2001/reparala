@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:repara_latam/main.dart';
 import 'package:repara_latam/models/messages.dart';
@@ -16,6 +17,8 @@ class AllHomepage extends StatefulWidget {
 }
 
 class _AllHomepageState extends State<AllHomepage> {
+  final auth = FirebaseAuth.instance;
+
   double _windowWidth = 0;
   double _windowHeight = 0;
 
@@ -124,9 +127,16 @@ class _AllHomepageState extends State<AllHomepage> {
         break;
     }
 
+    signOut() {
+      auth.signOut().then((value) => Navigator.of(context).pop());
+    }
+
     Future<bool> onWillPopOptions() {
       switch (_currentScreen) {
         case 10:
+          _selectedOption = null;
+          _currentScreen = null;
+          signOut();
           break;
         case 11:
           setState(() {
@@ -138,20 +148,24 @@ class _AllHomepageState extends State<AllHomepage> {
             _currentScreen = 11;
           });
           break;
+        case 20:
+          signOut();
+          break;
         case 21:
           setState(() {
             _currentScreen = 20;
           });
           break;
-          break;
         case 30:
-          setState(() {});
-          break;
+          signOut();
           break;
         case 31:
           setState(() {
             _currentScreen = 30;
           });
+          break;
+        case 40:
+          signOut();
           break;
         case 50:
           setState(() {
