@@ -72,6 +72,7 @@ class _AllLoginState extends State<AllLogin> {
   double _registrarseXOffset = 0;
   double _validacionXOffset = 0;
   double _entrarXOffset = 0;
+  double _recuperarXOffset = 0;
 
   bool _tACCheckbox = false;
 
@@ -118,6 +119,7 @@ class _AllLoginState extends State<AllLogin> {
         _registrarseXOffset = _windowWidth;
         _validacionXOffset = _windowWidth;
         _entrarXOffset = _windowWidth;
+        _recuperarXOffset = _windowWidth;
         break;
       case 10:
         _firstScreenXOffset = -_windowWidth;
@@ -132,6 +134,11 @@ class _AllLoginState extends State<AllLogin> {
       case 20:
         _firstScreenXOffset = -_windowWidth;
         _entrarXOffset = 0;
+        _recuperarXOffset = _windowWidth;
+        break;
+      case 21:
+        _entrarXOffset = -_windowWidth;
+        _recuperarXOffset = 0;
         break;
     }
 
@@ -152,6 +159,11 @@ class _AllLoginState extends State<AllLogin> {
         case 20:
           setState(() {
             _pageState = 0;
+          });
+          break;
+        case 21:
+          setState(() {
+            _pageState = 20;
           });
           break;
       }
@@ -490,6 +502,7 @@ class _AllLoginState extends State<AllLogin> {
                       children: [
                         // HEADER
                         Container(
+                          margin: EdgeInsets.only(bottom: 14),
                           width: double.infinity,
                           height: 70,
                           decoration: BoxDecoration(
@@ -544,10 +557,17 @@ class _AllLoginState extends State<AllLogin> {
                                   margin: EdgeInsets.symmetric(vertical: 14),
                                   child: Align(
                                     alignment: Alignment.bottomRight,
-                                    child: Text(
-                                      '¿Olvidaste tu contraseña?',
-                                      style: TextStyle(
-                                        fontSize: 12,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _pageState = 21;
+                                        });
+                                      },
+                                      child: Text(
+                                        '¿Olvidaste tu contraseña?',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -574,6 +594,123 @@ class _AllLoginState extends State<AllLogin> {
                                     },
                                     child: PrimaryButton(
                                       btnText: 'ENTRAR',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // RECUPERAR CONTRASEÑA
+                Center(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.fastLinearToSlowEaseIn,
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.91,
+                    transform:
+                        Matrix4.translationValues(_recuperarXOffset, 0, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                    child: Column(
+                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // HEADER
+                        Container(
+                          margin: EdgeInsets.only(bottom: 14),
+                          width: double.infinity,
+                          height: 98,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF021028),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(21),
+                              topRight: Radius.circular(21),
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              auth.signInAnonymously().then((value) =>
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => AppBody(),
+                                    ),
+                                  ));
+                            },
+                            child: Center(
+                              child: Text(
+                                'Recuperar Contraseña',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 7),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // BODY
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 35),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Container(),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 7),
+                                  child: Text(
+                                    'Introduce la dirección de correo con la cual te registraste',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFFB021028)
+                                            .withOpacity(0.70)),
+                                  ),
+                                ),
+                                InputWithIcon(
+                                  controller: _emailController,
+                                  icon: Icons.person_outline,
+                                  hint: 'Email',
+                                  obscure: false,
+                                  onChanged: (value) {},
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Container(),
+                                ),
+                                // BTN ENTRAR
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 21),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      auth.sendPasswordResetEmail(
+                                          email: _emailController.text);
+                                      FocusScope.of(context).unfocus();
+
+                                      setState(() {
+                                        _pageState = 20;
+                                      });
+
+                                      new Future.delayed(
+                                          const Duration(seconds: 1), () {
+                                        // deleayed code here
+                                        print('delayed execution');
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content:
+                                                    Text('Email enviado')));
+                                      });
+                                    },
+                                    child: PrimaryButton(
+                                      btnText: 'RESETEAR',
                                     ),
                                   ),
                                 ),

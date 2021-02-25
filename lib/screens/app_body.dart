@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:repara_latam/main.dart';
 import 'package:repara_latam/models/messages.dart';
 import 'package:repara_latam/models/work_order_model.dart';
@@ -127,17 +128,54 @@ class _AllHomepageState extends State<AllHomepage> {
         break;
     }
 
-    signOut() {
+    _signOut() {
+      _selectedOption = null;
+      _currentScreen = null;
       auth.signOut().then((value) => Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) => MyApp())));
+    }
+
+    Future<bool> _confirmSignOut() {
+      return showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Center(child: Text('Salir')),
+                content: Text(
+                  '¿Deseas salir de la aplicación o salir de tu cuenta?',
+                  textAlign: TextAlign.center,
+                ),
+                actions: <Widget>[
+                  Center(
+                    child: TextButton(
+                        onPressed: () {
+                          SystemChannels.platform
+                              .invokeMethod('SystemNavigator.pop');
+                        },
+                        child: Text('Salir de la aplicación')),
+                  ),
+                  Center(
+                    child: TextButton(
+                        onPressed: () {
+                          _signOut();
+                          Navigator.pop(context, true);
+                        },
+                        child: Text('Salir de mi cuenta')),
+                  ),
+                  Center(
+                      child: TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('Cancelar')))
+                ],
+              ));
     }
 
     Future<bool> onWillPopOptions() {
       switch (_currentScreen) {
         case 10:
-          _selectedOption = null;
-          _currentScreen = null;
-          signOut();
+          // _selectedOption = null;
+          // _currentScreen = null;
+          _confirmSignOut();
+          //signOut();
           break;
         case 11:
           setState(() {
@@ -150,7 +188,7 @@ class _AllHomepageState extends State<AllHomepage> {
           });
           break;
         case 20:
-          signOut();
+          _confirmSignOut();
           break;
         case 21:
           setState(() {
@@ -158,7 +196,7 @@ class _AllHomepageState extends State<AllHomepage> {
           });
           break;
         case 30:
-          signOut();
+          _confirmSignOut();
           break;
         case 31:
           setState(() {
@@ -166,7 +204,7 @@ class _AllHomepageState extends State<AllHomepage> {
           });
           break;
         case 40:
-          signOut();
+          _confirmSignOut();
           break;
         case 50:
           setState(() {
