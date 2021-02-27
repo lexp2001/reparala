@@ -45,7 +45,7 @@ var messagesData = [
   },
   {
     "userId": "Admin",
-    "workerId": "Pedro Alcazar -  Mecánico",
+    "workerId": "Pedro Alcázar -  Mecánico",
     "workerPicture": "assets/images/person3.jpg",
     "workerCategories": "Mecánica, Construcción",
     "message":
