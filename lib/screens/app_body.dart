@@ -42,7 +42,15 @@ class _AllHomepageState extends State<AllHomepage> {
       allMarkers.add(Marker(
         markerId: MarkerId(element.name),
         draggable: false,
-        infoWindow: InfoWindow(title: element.name, snippet: element.score),
+        infoWindow: InfoWindow(
+          title: element.name,
+          snippet: '★' + element.score,
+          onTap: () {
+            setState(() {
+              _currentScreen = 50;
+            });
+          },
+        ),
         position: element.locationCoords,
       ));
     });
@@ -342,7 +350,7 @@ class _AllHomepageState extends State<AllHomepage> {
 
                                                 ),
                                             zoom: 13),
-                                        markers: _markers,
+                                        markers: Set.from(allMarkers),
                                       ),
                               ),
                               //STARS

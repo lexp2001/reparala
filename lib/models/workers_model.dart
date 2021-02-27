@@ -35,7 +35,7 @@ final List<Worker> workersList = [
     address: '',
     score: '4.7',
     coverImage: 'assets/images/sewing_small.jpg',
-    locationCoords: LatLng(-33.427752401749466, -70.60533480245113),
+    locationCoords: LatLng(-33.44087312775334, -70.67539448035822),
   ),
   Worker(
     name: 'Luisa Villarreal - Costurera',
