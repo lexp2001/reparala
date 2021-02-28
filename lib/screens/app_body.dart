@@ -38,7 +38,8 @@ class _AllHomepageState extends State<AllHomepage> {
   void initState() {
     super.initState();
     _setMarkerIcon();
-    workersList.forEach((element) {
+
+    workersList.asMap().forEach((index, element) {
       allMarkers.add(Marker(
         markerId: MarkerId(element.name),
         draggable: false,
@@ -48,6 +49,8 @@ class _AllHomepageState extends State<AllHomepage> {
           onTap: () {
             setState(() {
               _currentScreen = 50;
+              _selectedWorker = index;
+              print(_selectedWorker);
             });
           },
         ),
@@ -137,6 +140,7 @@ class _AllHomepageState extends State<AllHomepage> {
 
   int _selectedWorkOrder = 0;
   int _selectedMessage = 0;
+  int _selectedWorker = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -987,7 +991,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       transform:
                                           Matrix4.translationValues(0, -25, 0),
                                       child: Image.asset(
-                                        'assets/images/sewing_small.jpg',
+                                        workersList[_selectedWorker].coverImage,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -996,7 +1000,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       //margin: EdgeInsets.only(top: 21),
                                       child: Center(
                                         child: Text(
-                                          'Ana Medina - Taller de Costura',
+                                          workersList[_selectedWorker].name,
                                           style: TextStyle(
                                               color: _darkBlue,
                                               fontSize: 21,
@@ -1009,7 +1013,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       margin: EdgeInsets.only(top: 14),
                                       child: Center(
                                         child: Text(
-                                          'A 1,4Km de distancia',
+                                          workersList[_selectedWorker].distance,
                                           style: TextStyle(
                                             color: _darkBlue.withOpacity(0.7),
                                             fontSize: 12,
@@ -1035,23 +1039,24 @@ class _AllHomepageState extends State<AllHomepage> {
                                               Icons.star_rate_rounded,
                                               color: _coral,
                                             ),
-                                            Icon(
-                                              Icons.star_rate_rounded,
-                                              color: _coral,
-                                            ),
-                                            Icon(
-                                              Icons.star_rate_rounded,
-                                              color: _coral,
-                                            ),
-                                            Icon(
-                                              Icons.star_rate_rounded,
-                                              color: _coral,
-                                            ),
-                                            Icon(
-                                              Icons.star_half_rounded,
-                                              color: _coral,
-                                            ),
-                                            Text('4.5'),
+                                            // Icon(
+                                            //   Icons.star_rate_rounded,
+                                            //   color: _coral,
+                                            // ),
+                                            // Icon(
+                                            //   Icons.star_rate_rounded,
+                                            //   color: _coral,
+                                            // ),
+                                            // Icon(
+                                            //   Icons.star_rate_rounded,
+                                            //   color: _coral,
+                                            // ),
+                                            // Icon(
+                                            //   Icons.star_half_rounded,
+                                            //   color: _coral,
+                                            // ),
+                                            Text(workersList[_selectedWorker]
+                                                .score),
                                           ],
                                         ),
                                       ),
@@ -1062,7 +1067,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                         margin: EdgeInsets.only(top: 21),
                                         width: _windowWidth * 0.77,
                                         child: Text(
-                                          'Architecto omnis atque dolores harum sapiente ab quia. Ipsam est aperiam accusamus quia quas qui. Amet eos sint ab rem sapiente. Nulla consequ untur praesentium aspernatur reiciendis. Aut debitis mollitia vero.',
+                                          workersList[_selectedWorker]
+                                              .description,
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
