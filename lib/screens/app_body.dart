@@ -1083,19 +1083,23 @@ class _AllHomepageState extends State<AllHomepage> {
                                         crossAxisCount: 2,
                                         children: [
                                           Image.asset(
-                                            'assets/images/sewing_work_table_small.jpg',
+                                            workersList[_selectedWorker]
+                                                .gallery[0],
                                             fit: BoxFit.cover,
                                           ),
                                           Image.asset(
-                                            'assets/images/silk_small.jpg',
+                                            workersList[_selectedWorker]
+                                                .gallery[1],
                                             fit: BoxFit.cover,
                                           ),
                                           Image.asset(
-                                            'assets/images/reels_small.jpg',
+                                            workersList[_selectedWorker]
+                                                .gallery[2],
                                             fit: BoxFit.cover,
                                           ),
                                           Image.asset(
-                                            'assets/images/fibers_small.jpg',
+                                            workersList[_selectedWorker]
+                                                .gallery[3],
                                             fit: BoxFit.cover,
                                           ),
                                         ],
