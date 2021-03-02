@@ -10,6 +10,7 @@ import 'package:repara_latam/main.dart';
 import 'package:repara_latam/models/messages.dart';
 import 'package:repara_latam/models/work_order_model.dart';
 import 'package:repara_latam/models/workers_model.dart';
+import 'package:repara_latam/services/worker_service.dart';
 
 class AppBody extends StatelessWidget {
   @override
@@ -25,38 +26,60 @@ class AllHomepage extends StatefulWidget {
   _AllHomepageState createState() => _AllHomepageState();
 }
 
+List<Marker> allMarkers = [];
+
 class _AllHomepageState extends State<AllHomepage> {
   final auth = FirebaseAuth.instance;
 
   Set<Marker> _markers = HashSet<Marker>();
   GoogleMapController _mapController;
   BitmapDescriptor _markerIcon;
-
-  List<Marker> allMarkers = [];
+  Worker _selectedWorker;
 
   @override
   void initState() {
     super.initState();
     _setMarkerIcon();
 
-    workersList.asMap().forEach((index, element) {
-      allMarkers.add(Marker(
-        markerId: MarkerId(element.name),
-        draggable: false,
-        infoWindow: InfoWindow(
-          title: element.name,
-          snippet: '★' + element.score,
-          onTap: () {
-            setState(() {
-              _currentScreen = 50;
-              _selectedWorker = index;
-              print(_selectedWorker);
-            });
-          },
-        ),
-        position: element.locationCoords,
-      ));
+    _selectedWorker = new Worker(
+      name: "",
+      description: "",
+      category: "",
+      address: "",
+      distance: "",
+      score: "",
+      coverImage: "",
+      gallery: ["", "", "", ""],
+      locationCoords: new LatLng(0.0, 0.0),
+    );
+
+    //List<Marker> allMarkers = [];
+    final Future<WorkersList> workers = getWorkers().then((value) {
+      value.workers.asMap().forEach((index, element) {
+        //print(index);
+        //print(element.name);
+        //print(element.coverImage);
+        //print(element.gallery[0]);
+        allMarkers.add(Marker(
+          markerId: MarkerId(element.name),
+          draggable: false,
+          infoWindow: InfoWindow(
+            title: element.name + " - " + element.category,
+            snippet: '★' + element.score,
+            onTap: () {
+              setState(() {
+                _currentScreen = 50;
+                _selectedWorker = element;
+                //print(_selectedWorker);
+              });
+            },
+          ),
+          position: element.locationCoords,
+        ));
+      });
+      return null;
     });
+
   }
 
   void _setMapStyle() async {
@@ -140,7 +163,7 @@ class _AllHomepageState extends State<AllHomepage> {
 
   int _selectedWorkOrder = 0;
   int _selectedMessage = 0;
-  int _selectedWorker = 0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +316,7 @@ class _AllHomepageState extends State<AllHomepage> {
           });
           break;
       }
-      print(_currentScreen);
+      //print(_currentScreen);
     }
 
     return WillPopScope(
@@ -991,7 +1014,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       transform:
                                           Matrix4.translationValues(0, -25, 0),
                                       child: Image.asset(
-                                        workersList[_selectedWorker].coverImage,
+                                        _selectedWorker.coverImage,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -1000,7 +1023,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       //margin: EdgeInsets.only(top: 21),
                                       child: Center(
                                         child: Text(
-                                          workersList[_selectedWorker].name,
+                                          _selectedWorker.name + " - " + _selectedWorker.category,
                                           style: TextStyle(
                                               color: _darkBlue,
                                               fontSize: 21,
@@ -1013,7 +1036,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       margin: EdgeInsets.only(top: 14),
                                       child: Center(
                                         child: Text(
-                                          workersList[_selectedWorker].distance,
+                                          _selectedWorker.distance,
                                           style: TextStyle(
                                             color: _darkBlue.withOpacity(0.7),
                                             fontSize: 12,
@@ -1025,7 +1048,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          print('Click reviews');
+                                          //print('Click reviews');
                                           _currentScreen = 52;
                                         });
                                       },
@@ -1055,7 +1078,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                             //   Icons.star_half_rounded,
                                             //   color: _coral,
                                             // ),
-                                            Text(workersList[_selectedWorker]
+                                            Text(_selectedWorker
                                                 .score),
                                           ],
                                         ),
@@ -1067,7 +1090,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                         margin: EdgeInsets.only(top: 21),
                                         width: _windowWidth * 0.77,
                                         child: Text(
-                                          workersList[_selectedWorker]
+                                          _selectedWorker
                                               .description,
                                           textAlign: TextAlign.center,
                                         ),
@@ -1083,19 +1106,19 @@ class _AllHomepageState extends State<AllHomepage> {
                                         crossAxisCount: 2,
                                         children: [
                                           Image.asset(
-                                            'assets/images/sewing_work_table_small.jpg',
+                                            _selectedWorker.gallery[0],
                                             fit: BoxFit.cover,
                                           ),
                                           Image.asset(
-                                            'assets/images/silk_small.jpg',
+                                            _selectedWorker.gallery[1],
                                             fit: BoxFit.cover,
                                           ),
                                           Image.asset(
-                                            'assets/images/reels_small.jpg',
+                                            _selectedWorker.gallery[2],
                                             fit: BoxFit.cover,
                                           ),
                                           Image.asset(
-                                            'assets/images/fibers_small.jpg',
+                                            _selectedWorker.gallery[3],
                                             fit: BoxFit.cover,
                                           ),
                                         ],
@@ -1107,7 +1130,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      print('Contactar');
+                                      //print('Contactar');
                                       _currentScreen = 21;
                                       _selectedOption = 2;
                                     });
@@ -1470,7 +1493,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        print('Worker profile clicked');
+                                        //print('Worker profile clicked');
                                       });
                                     },
                                     child: Align(
@@ -2057,7 +2080,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            print('Clicked worker link');
+                                            //print('Clicked worker link');
                                           });
                                         },
                                         child: Column(

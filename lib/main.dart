@@ -167,7 +167,7 @@ class _AllLoginState extends State<AllLogin> {
           });
           break;
       }
-      print(_pageState);
+      //print(_pageState);
     }
 
     return WillPopScope(
@@ -408,12 +408,12 @@ class _AllLoginState extends State<AllLogin> {
                                               password:
                                                   _passwordController.text)
                                           .then((_) {
-                                        print('User created');
+                                        //print('User created');
                                         setState(() {
                                           _pageState = 11;
                                         });
                                         user.sendEmailVerification().then((_) {
-                                          print('Verification email sent');
+                                          //print('Verification email sent');
                                           triggerEmailVerification();
                                         });
                                       });
@@ -702,7 +702,7 @@ class _AllLoginState extends State<AllLogin> {
                                       new Future.delayed(
                                           const Duration(seconds: 1), () {
                                         // deleayed code here
-                                        print('delayed execution');
+                                        //print('delayed execution');
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content:
