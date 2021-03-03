@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.repara_latam">
    <application
-        android:label="repara_latam"
+        android:label="Repara Latam (a1.3)"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -79,7 +79,6 @@ class _AllHomepageState extends State<AllHomepage> {
       });
       return null;
     });
-
   }
 
   void _setMapStyle() async {
@@ -118,6 +117,7 @@ class _AllHomepageState extends State<AllHomepage> {
 
   double _windowWidth = 0;
   double _windowHeight = 0;
+  bool _isSmallScreen = false;
 
   // Options
   //
@@ -164,13 +164,16 @@ class _AllHomepageState extends State<AllHomepage> {
   int _selectedWorkOrder = 0;
   int _selectedMessage = 0;
 
-
   @override
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
 
     _windowHeight = MediaQuery.of(context).size.height;
     _windowWidth = MediaQuery.of(context).size.width;
+
+    if (_windowWidth <= 400) {
+      _isSmallScreen = true;
+    }
 
     switch (_currentScreen) {
       case 10:
@@ -327,6 +330,7 @@ class _AllHomepageState extends State<AllHomepage> {
           Column(
             children: [
               Container(
+                height: _windowHeight - 70,
                 //color: Colors.greenAccent,
                 child: IndexedStack(
                   index: _selectedOption - 1,
@@ -334,17 +338,13 @@ class _AllHomepageState extends State<AllHomepage> {
                     // REPARAR
                     Stack(
                       children: [
-                        // STACK HEIGHT DEFINER
-                        Container(
-                          height: 600,
-                        ),
                         // MAP
                         AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow.withOpacity(0.21),
                           width: _windowWidth,
-                          height: MediaQuery.of(context).size.height * 0.8975,
+                          height: MediaQuery.of(context).size.height,
                           transform:
                               Matrix4.translationValues(_screen12XOffset, 0, 0),
                           child: Stack(
@@ -724,11 +724,11 @@ class _AllHomepageState extends State<AllHomepage> {
                             ],
                           ),
                         ),
-                        // BODY: ¿Qué deseas reparar?'
+                        // BODY: ¿Qué deseas reparar?
                         AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
-                          //color: Colors.yellow.withOpacity(0.21),
+                          //color: Colors.yellow,
                           height: MediaQuery.of(context).size.height * 0.75,
                           transform: Matrix4.translationValues(
                               _screen10XOffset, 100, 0),
@@ -756,7 +756,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                     // INPUT
                                     Container(
                                       margin: EdgeInsets.only(top: 21),
-                                      width: 320,
+                                      width: _isSmallScreen ? 280 : 320,
                                       child: TextField(
                                         maxLength: 30,
                                         keyboardType: TextInputType.text,
@@ -786,7 +786,10 @@ class _AllHomepageState extends State<AllHomepage> {
                                       });
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.all(21),
+                                      margin: EdgeInsets.only(
+                                        bottom: 28,
+                                        right: 14,
+                                      ),
                                       width: 63,
                                       height: 63,
                                       decoration: BoxDecoration(
@@ -812,7 +815,9 @@ class _AllHomepageState extends State<AllHomepage> {
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow.withOpacity(0.21),
                           width: _windowWidth,
-                          height: MediaQuery.of(context).size.height * 0.77,
+                          height: _isSmallScreen
+                              ? _windowHeight * 0.75
+                              : _windowHeight * 0.80,
                           transform: Matrix4.translationValues(
                               _screen11XOffset, 75, 0),
                           child: Stack(
@@ -991,162 +996,158 @@ class _AllHomepageState extends State<AllHomepage> {
                         ),
                         // WORKER PAGE
                         //-- // SIZE DEFINER
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.897,
-                          // color: Colors.black,
-                          child: AnimatedContainer(
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.fastLinearToSlowEaseIn,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            //width: _windowWidth,
-                            //height: MediaQuery.of(context).size.height * 0.8,
-                            transform: Matrix4.translationValues(
-                                _screen50XOffset, 0, 0),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                // CONTENT
-                                ListView(
-                                  children: [
-                                    // PICTURE
-                                    Container(
-                                      height: 210,
-                                      transform:
-                                          Matrix4.translationValues(0, -25, 0),
-                                      child: Image.asset(
-                                        _selectedWorker.coverImage,
-                                        fit: BoxFit.cover,
-                                      ),
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 1000),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          //width: _windowWidth,
+                          height: _windowHeight,
+                          transform:
+                              Matrix4.translationValues(_screen50XOffset, 0, 0),
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              // CONTENT
+                              ListView(
+                                children: [
+                                  // PICTURE
+                                  Container(
+                                    height: 210,
+                                    transform:
+                                        Matrix4.translationValues(0, -25, 0),
+                                    child: Image.asset(
+                                      _selectedWorker.coverImage,
+                                      fit: BoxFit.cover,
                                     ),
-                                    // TITLE
-                                    Container(
-                                      //margin: EdgeInsets.only(top: 21),
-                                      child: Center(
-                                        child: Text(
-                                          _selectedWorker.name + " - " + _selectedWorker.category,
-                                          style: TextStyle(
-                                              color: _darkBlue,
-                                              fontSize: 21,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
-                                    // DISTANCE
-                                    Container(
-                                      margin: EdgeInsets.only(top: 14),
-                                      child: Center(
-                                        child: Text(
-                                          _selectedWorker.distance,
-                                          style: TextStyle(
-                                            color: _darkBlue.withOpacity(0.7),
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // RATING
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          //print('Click reviews');
-                                          _currentScreen = 52;
-                                        });
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 7),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.star_rate_rounded,
-                                              color: _coral,
-                                            ),
-                                            // Icon(
-                                            //   Icons.star_rate_rounded,
-                                            //   color: _coral,
-                                            // ),
-                                            // Icon(
-                                            //   Icons.star_rate_rounded,
-                                            //   color: _coral,
-                                            // ),
-                                            // Icon(
-                                            //   Icons.star_rate_rounded,
-                                            //   color: _coral,
-                                            // ),
-                                            // Icon(
-                                            //   Icons.star_half_rounded,
-                                            //   color: _coral,
-                                            // ),
-                                            Text(_selectedWorker
-                                                .score),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // DESCRIPTION
-                                    Align(
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 21),
-                                        width: _windowWidth * 0.77,
-                                        child: Text(
-                                          _selectedWorker
-                                              .description,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    // GALLERY
-                                    Container(
-                                      margin: EdgeInsets.only(top: 28),
-                                      width: _windowWidth,
-                                      height: _windowWidth,
-                                      child: GridView.count(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        crossAxisCount: 2,
-                                        children: [
-                                          Image.asset(
-                                            _selectedWorker.gallery[0],
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Image.asset(
-                                            _selectedWorker.gallery[1],
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Image.asset(
-                                            _selectedWorker.gallery[2],
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Image.asset(
-                                            _selectedWorker.gallery[3],
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // BTN CONTACTAR
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      //print('Contactar');
-                                      _currentScreen = 21;
-                                      _selectedOption = 2;
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(bottom: 14),
-                                    child: Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: PrimaryButton(
-                                        btnText: 'CONTACTAR',
+                                  ),
+                                  // TITLE
+                                  Container(
+                                    //margin: EdgeInsets.only(top: 21),
+                                    child: Center(
+                                      child: Text(
+                                        _selectedWorker.name +
+                                            " - " +
+                                            _selectedWorker.category,
+                                        style: TextStyle(
+                                            color: _darkBlue,
+                                            fontSize: 21,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ),
+                                  // DISTANCE
+                                  Container(
+                                    margin: EdgeInsets.only(top: 14),
+                                    child: Center(
+                                      child: Text(
+                                        _selectedWorker.distance,
+                                        style: TextStyle(
+                                          color: _darkBlue.withOpacity(0.7),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  // RATING
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        //print('Click reviews');
+                                        _currentScreen = 52;
+                                      });
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 7),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.star_rate_rounded,
+                                            color: _coral,
+                                          ),
+                                          // Icon(
+                                          //   Icons.star_rate_rounded,
+                                          //   color: _coral,
+                                          // ),
+                                          // Icon(
+                                          //   Icons.star_rate_rounded,
+                                          //   color: _coral,
+                                          // ),
+                                          // Icon(
+                                          //   Icons.star_rate_rounded,
+                                          //   color: _coral,
+                                          // ),
+                                          // Icon(
+                                          //   Icons.star_half_rounded,
+                                          //   color: _coral,
+                                          // ),
+                                          Text(_selectedWorker.score),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // DESCRIPTION
+                                  Align(
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 21),
+                                      width: _windowWidth * 0.77,
+                                      child: Text(
+                                        _selectedWorker.description,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  // GALLERY
+                                  Container(
+                                    margin: EdgeInsets.only(top: 28),
+                                    width: _windowWidth,
+                                    height: _windowWidth,
+                                    child: GridView.count(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      crossAxisCount: 2,
+                                      children: [
+                                        Image.asset(
+                                          _selectedWorker.gallery[0],
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Image.asset(
+                                          _selectedWorker.gallery[1],
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Image.asset(
+                                          _selectedWorker.gallery[2],
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Image.asset(
+                                          _selectedWorker.gallery[3],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // BTN CONTACTAR
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    //print('Contactar');
+                                    _currentScreen = 21;
+                                    _selectedOption = 2;
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 14),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: PrimaryButton(
+                                      btnText: 'CONTACTAR',
+                                    ),
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         // REVIEWS PLACEHOLDER
@@ -1264,7 +1265,9 @@ class _AllHomepageState extends State<AllHomepage> {
                                   margin: EdgeInsets.only(bottom: 21),
                                   //padding: EdgeInsets.all(21),
                                   height: 49,
-                                  width: _windowWidth * 0.77,
+                                  width: _isSmallScreen
+                                      ? _windowWidth * 0.91
+                                      : _windowWidth * 0.77,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(100),
                                     boxShadow: [
@@ -1319,7 +1322,9 @@ class _AllHomepageState extends State<AllHomepage> {
                                         child: Align(
                                           child: Container(
                                             margin: EdgeInsets.only(bottom: 35),
-                                            width: _windowWidth * 0.77,
+                                            width: _isSmallScreen
+                                                ? _windowWidth * 0.91
+                                                : _windowWidth * 0.77,
                                             height: 70,
                                             //color: Colors.red,
                                             child: Row(
@@ -1500,7 +1505,9 @@ class _AllHomepageState extends State<AllHomepage> {
                                       alignment: Alignment.center,
                                       child: Container(
                                         margin: EdgeInsets.only(top: 25),
-                                        width: _windowWidth * 0.77,
+                                        width: _isSmallScreen
+                                            ? _windowWidth * 0.91
+                                            : _windowWidth * 0.77,
                                         height: 70,
                                         //color: Colors.red,
                                         child: Row(
@@ -1636,7 +1643,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
-                                              width: 180,
+                                              width: _windowWidth * 0.42,
                                               child: TextField(
                                                 enabled: false,
                                                 decoration: InputDecoration(
@@ -1654,7 +1661,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                             ),
                                             // ATTACH ICON
                                             Container(
-                                              margin: EdgeInsets.only(left: 21),
+                                              margin: EdgeInsets.only(
+                                                  left: _windowWidth * 0.01),
                                               child: Icon(
                                                 Icons.attach_file_rounded,
                                                 color:
@@ -1663,7 +1671,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                             ),
                                             // SEND ICON
                                             Container(
-                                              margin: EdgeInsets.only(left: 21),
+                                              margin: EdgeInsets.only(
+                                                  left: _windowWidth * 0.01),
                                               width: 28,
                                               height: 28,
                                               decoration: BoxDecoration(
@@ -1777,8 +1786,10 @@ class _AllHomepageState extends State<AllHomepage> {
                                     },
                                     child: Container(
                                       margin: EdgeInsets.only(bottom: 35),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.77,
+                                      width: _isSmallScreen
+                                          ? _windowWidth * 0.91
+                                          : MediaQuery.of(context).size.width *
+                                              0.77,
                                       height: 100,
                                       decoration: (BoxDecoration(
                                         color: Theme.of(context)
@@ -1905,9 +1916,13 @@ class _AllHomepageState extends State<AllHomepage> {
                               Matrix4.translationValues(_screen31XOffset, 0, 0),
                           child: Center(
                             child: Container(
-                              margin: EdgeInsets.only(top: 110),
-                              width: MediaQuery.of(context).size.width * 0.77,
-                              height: _windowHeight * 0.7,
+                              margin: _isSmallScreen
+                                  ? EdgeInsets.only(top: 25)
+                                  : EdgeInsets.only(top: 110, bottom: 21),
+                              width: _isSmallScreen
+                                  ? _windowWidth * 0.91
+                                  : MediaQuery.of(context).size.width * 0.77,
+                              //height: _windowHeight * 0.7,
                               decoration: (BoxDecoration(
                                 color:
                                     Theme.of(context).scaffoldBackgroundColor,
@@ -2403,7 +2418,7 @@ class _AllHomepageState extends State<AllHomepage> {
                     ),
                     // PERFIL
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         // HEADER
@@ -2483,12 +2498,19 @@ class _AllHomepageState extends State<AllHomepage> {
                                 size: 140,
                                 color: _coral,
                               ),
-                              Text(
-                                'En Desarrollo',
-                                style: TextStyle(
-                                    color: _coral,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w500),
+                              GestureDetector(
+                                onTap: () {
+                                  print(_windowWidth);
+                                  print(_windowHeight);
+                                  print(_isSmallScreen);
+                                },
+                                child: Text(
+                                  'En Desarrollo',
+                                  style: TextStyle(
+                                      color: _coral,
+                                      fontSize: 21,
+                                      fontWeight: FontWeight.w500),
+                                ),
                               )
                             ],
                           ),
@@ -2506,6 +2528,7 @@ class _AllHomepageState extends State<AllHomepage> {
             width: double.infinity,
             height: 70,
             decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
               border: Border(
                 top: BorderSide(
                   color: _darkBlue.withOpacity(0.21),
