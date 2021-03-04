@@ -361,28 +361,30 @@ class _AllHomepageState extends State<AllHomepage> {
                                 //   fit: BoxFit.cover,
                                 // ),
 
-                                child: (applicationBloc.currentLocation == null || allMarkersRenderd.length==0)
-                                    ? Center(
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : GoogleMap(
-                                        onMapCreated: _onMapCreated,
-                                        mapType: MapType.normal,
-                                        myLocationEnabled: true,
-                                        initialCameraPosition: CameraPosition(
-                                            target: LatLng(
-                                                -33.445995, -70.667057
+                                child:
+                                    (applicationBloc.currentLocation == null ||
+                                            allMarkersRenderd.length == 0)
+                                        ? Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : GoogleMap(
+                                            onMapCreated: _onMapCreated,
+                                            mapType: MapType.normal,
+                                            myLocationEnabled: true,
+                                            initialCameraPosition: CameraPosition(
+                                                target: LatLng(-33.445995, -70.667057
 
-                                                // SETS USER LOCATION
-                                                // applicationBloc
-                                                //     .currentLocation.latitude,
-                                                // applicationBloc
-                                                //     .currentLocation.longitude
+                                                    // SETS USER LOCATION
+                                                    // applicationBloc
+                                                    //     .currentLocation.latitude,
+                                                    // applicationBloc
+                                                    //     .currentLocation.longitude
 
-                                                ),
-                                            zoom: 13),
-                                        markers: Set.from(allMarkersRenderd),
-                                      ),
+                                                    ),
+                                                zoom: 13),
+                                            markers:
+                                                Set.from(allMarkersRenderd),
+                                          ),
                               ),
                               //STARS
                               // STARS
@@ -1926,7 +1928,9 @@ class _AllHomepageState extends State<AllHomepage> {
                               width: _isSmallScreen
                                   ? _windowWidth * 0.91
                                   : MediaQuery.of(context).size.width * 0.77,
-                              //height: _windowHeight * 0.7,
+                              height: _windowHeight >= 750
+                                  ? _windowHeight * 0.63
+                                  : null,
                               decoration: (BoxDecoration(
                                 color:
                                     Theme.of(context).scaffoldBackgroundColor,

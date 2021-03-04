@@ -97,24 +97,31 @@ class _AllLoginState extends State<AllLogin> {
     print('Sign Up Initialized');
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text
-      );
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: _emailController.text, password: _passwordController.text);
 
       FirebaseAuth.instance.currentUser.sendEmailVerification().then((_) {
-        print('Delayed verification email sent');
+        print('Verification email sent');
         triggerEmailVerification();
+
+        FocusScope.of(context).unfocus();
+
         setState(() {
           _pageState = 11;
         });
       });
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFFBFF4949),
+            content: Text('La contraseña es muy débil')));
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xFFBFF4949),
+            content: Text('La dirección de correo ya está en uso')));
       }
     } catch (e) {
       print(e);
@@ -168,7 +175,7 @@ class _AllLoginState extends State<AllLogin> {
     _windowHeight = MediaQuery.of(context).size.height;
     _windowWidth = MediaQuery.of(context).size.width;
 
-    if (_windowWidth <= 400) {
+    if (_windowHeight <= 690) {
       _isSmallScreen = true;
     }
 
@@ -414,6 +421,9 @@ class _AllLoginState extends State<AllLogin> {
                             padding: EdgeInsets.symmetric(horizontal: 35),
                             child: Column(
                               children: [
+                                Expanded(
+                                  child: Container(),
+                                ),
                                 InputWithIcon(
                                   controller: _emailController,
                                   icon: Icons.email_outlined,
@@ -438,27 +448,33 @@ class _AllLoginState extends State<AllLogin> {
                                 // TaC CHECKBOX
                                 Visibility(
                                   visible: !_isSmallScreen,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Checkbox(
-                                          value: _tACCheckbox,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _tACCheckbox = value;
-                                            });
-                                          }),
-                                      Flexible(
-                                        child: Container(
-                                          width: 210,
-                                          child: Text(
-                                              'He leído y acepto los términos y condiciones de uso.'),
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      top: 10,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Checkbox(
+                                            value: _tACCheckbox,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _tACCheckbox = value;
+                                              });
+                                            }),
+                                        Flexible(
+                                          child: Container(
+                                            width: 210,
+                                            child: Text(
+                                                'He leído y acepto los términos y condiciones de uso.'),
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Expanded(child: Container()),
+                                Expanded(flex: 4, child: Container()),
                                 // BTN SIGUIENTE
                                 Container(
                                   margin: EdgeInsets.only(bottom: 21),
@@ -539,8 +555,8 @@ class _AllLoginState extends State<AllLogin> {
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.fastLinearToSlowEaseIn,
                     height: _isSmallScreen
-                        ? MediaQuery.of(context).size.height * 0.56
-                        : MediaQuery.of(context).size.height * 0.42,
+                        ? MediaQuery.of(context).size.height * 0.54
+                        : MediaQuery.of(context).size.height * 0.40,
                     width: MediaQuery.of(context).size.width * 0.91,
                     transform: Matrix4.translationValues(_entrarXOffset, 0, 0),
                     decoration: BoxDecoration(
@@ -589,6 +605,9 @@ class _AllLoginState extends State<AllLogin> {
                             padding: EdgeInsets.symmetric(horizontal: 35),
                             child: Column(
                               children: [
+                                Expanded(
+                                  child: Container(),
+                                ),
                                 InputWithIcon(
                                   controller: _emailController,
                                   icon: Icons.person_outline,
@@ -623,6 +642,7 @@ class _AllLoginState extends State<AllLogin> {
                                   ),
                                 ),
                                 Expanded(
+                                  flex: 4,
                                   child: Container(),
                                 ),
                                 // BTN ENTRAR
@@ -660,7 +680,9 @@ class _AllLoginState extends State<AllLogin> {
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.fastLinearToSlowEaseIn,
-                    height: MediaQuery.of(context).size.height * 0.5,
+                    height: _isSmallScreen
+                        ? _windowHeight * 0.54
+                        : _windowHeight * 0.38,
                     width: MediaQuery.of(context).size.width * 0.91,
                     transform:
                         Matrix4.translationValues(_recuperarXOffset, 0, 0),
@@ -755,6 +777,8 @@ class _AllLoginState extends State<AllLogin> {
                                         //print('delayed execution');
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
+                                                backgroundColor:
+                                                    Color(0xFFBFF4949),
                                                 content:
                                                     Text('Email enviado')));
                                       });
