@@ -67,6 +67,7 @@ class _AllLoginState extends State<AllLogin> {
 
   double _windowWidth = 0;
   double _windowHeight = 0;
+  bool _isSmallScreen = false;
 
   double _firstScreenXOffset = 0;
   double _registrarseXOffset = 0;
@@ -92,6 +93,32 @@ class _AllLoginState extends State<AllLogin> {
     super.dispose();
   }
 
+  onClickSignUpSiguiente() {
+    print('Sign Up Initialized');
+    auth
+        .createUserWithEmailAndPassword(
+            email: _emailController.text, password: _passwordController.text)
+        .then((_) {
+      print('User created');
+      setState(() {
+        _pageState = 11;
+      });
+      // user.sendEmailVerification().then((_) {
+      //   print('Verification email sent');
+      //   triggerEmailVerification();
+      // });
+    });
+
+    new Future.delayed(const Duration(seconds: 20), () {
+      // deleayed code here
+      print('Delayed execution');
+      user.sendEmailVerification().then((_) {
+        print('Delayed verification email sent');
+        triggerEmailVerification();
+      });
+    });
+  }
+
   triggerEmailVerification() {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       checkEmailVerified();
@@ -112,6 +139,10 @@ class _AllLoginState extends State<AllLogin> {
   Widget build(BuildContext context) {
     _windowHeight = MediaQuery.of(context).size.height;
     _windowWidth = MediaQuery.of(context).size.width;
+
+    if (_windowWidth <= 400) {
+      _isSmallScreen = true;
+    }
 
     switch (_pageState) {
       case 0:
@@ -314,7 +345,9 @@ class _AllLoginState extends State<AllLogin> {
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.fastLinearToSlowEaseIn,
-                    height: MediaQuery.of(context).size.height * 0.54,
+                    height: _isSmallScreen
+                        ? MediaQuery.of(context).size.height * 0.54
+                        : MediaQuery.of(context).size.height * 0.49,
                     width: MediaQuery.of(context).size.width * 0.91,
                     transform:
                         Matrix4.translationValues(_registrarseXOffset, 0, 0),
@@ -375,24 +408,27 @@ class _AllLoginState extends State<AllLogin> {
                                   onChanged: (value) {},
                                 ),
                                 // TaC CHECKBOX
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Checkbox(
-                                        value: _tACCheckbox,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _tACCheckbox = value;
-                                          });
-                                        }),
-                                    Flexible(
-                                      child: Container(
-                                        width: 210,
-                                        child: Text(
-                                            'He leído y acepto los términos y condiciones de uso.'),
+                                Visibility(
+                                  visible: !_isSmallScreen,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Checkbox(
+                                          value: _tACCheckbox,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _tACCheckbox = value;
+                                            });
+                                          }),
+                                      Flexible(
+                                        child: Container(
+                                          width: 210,
+                                          child: Text(
+                                              'He leído y acepto los términos y condiciones de uso.'),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 Expanded(child: Container()),
                                 // BTN SIGUIENTE
@@ -400,23 +436,7 @@ class _AllLoginState extends State<AllLogin> {
                                   margin: EdgeInsets.only(bottom: 21),
                                   child: GestureDetector(
                                     onTap: () {
-                                      //;
-                                      //print(_emailController);
-                                      auth
-                                          .createUserWithEmailAndPassword(
-                                              email: _emailController.text,
-                                              password:
-                                                  _passwordController.text)
-                                          .then((_) {
-                                        //print('User created');
-                                        setState(() {
-                                          _pageState = 11;
-                                        });
-                                        user.sendEmailVerification().then((_) {
-                                          //print('Verification email sent');
-                                          triggerEmailVerification();
-                                        });
-                                      });
+                                      onClickSignUpSiguiente();
                                     },
                                     child: PrimaryButton(
                                       btnText: 'SIGUIENTE',
@@ -490,7 +510,9 @@ class _AllLoginState extends State<AllLogin> {
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.fastLinearToSlowEaseIn,
-                    height: MediaQuery.of(context).size.height * 0.5,
+                    height: _isSmallScreen
+                        ? MediaQuery.of(context).size.height * 0.56
+                        : MediaQuery.of(context).size.height * 0.42,
                     width: MediaQuery.of(context).size.width * 0.91,
                     transform: Matrix4.translationValues(_entrarXOffset, 0, 0),
                     decoration: BoxDecoration(
@@ -502,7 +524,7 @@ class _AllLoginState extends State<AllLogin> {
                       children: [
                         // HEADER
                         Container(
-                          margin: EdgeInsets.only(bottom: 14),
+                          //margin: EdgeInsets.only(bottom: 14),
                           width: double.infinity,
                           height: 70,
                           decoration: BoxDecoration(
