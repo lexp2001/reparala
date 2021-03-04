@@ -27,6 +27,7 @@ class AllHomepage extends StatefulWidget {
 }
 
 List<Marker> allMarkers = [];
+List<Marker> allMarkersRenderd = [];
 
 class _AllHomepageState extends State<AllHomepage> {
   final auth = FirebaseAuth.instance;
@@ -76,6 +77,9 @@ class _AllHomepageState extends State<AllHomepage> {
           ),
           position: element.locationCoords,
         ));
+      });
+      setState(() {
+        allMarkersRenderd = allMarkers;
       });
       return null;
     });
@@ -357,7 +361,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                 //   fit: BoxFit.cover,
                                 // ),
 
-                                child: (applicationBloc.currentLocation == null)
+                                child: (applicationBloc.currentLocation == null || allMarkersRenderd.length==0)
                                     ? Center(
                                         child: CircularProgressIndicator(),
                                       )
@@ -377,7 +381,7 @@ class _AllHomepageState extends State<AllHomepage> {
 
                                                 ),
                                             zoom: 13),
-                                        markers: Set.from(allMarkers),
+                                        markers: Set.from(allMarkersRenderd),
                                       ),
                               ),
                               //STARS

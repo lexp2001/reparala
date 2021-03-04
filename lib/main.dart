@@ -93,30 +93,58 @@ class _AllLoginState extends State<AllLogin> {
     super.dispose();
   }
 
-  onClickSignUpSiguiente() {
+  onClickSignUpSiguiente() async {
     print('Sign Up Initialized');
-    auth
-        .createUserWithEmailAndPassword(
-            email: _emailController.text, password: _passwordController.text)
-        .then((_) {
-      print('User created');
-      setState(() {
-        _pageState = 11;
-      });
-      // user.sendEmailVerification().then((_) {
-      //   print('Verification email sent');
-      //   triggerEmailVerification();
-      // });
-    });
 
-    new Future.delayed(const Duration(seconds: 20), () {
-      // deleayed code here
-      print('Delayed execution');
-      user.sendEmailVerification().then((_) {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text
+      );
+
+      FirebaseAuth.instance.currentUser.sendEmailVerification().then((_) {
         print('Delayed verification email sent');
         triggerEmailVerification();
+        setState(() {
+          _pageState = 11;
+        });
       });
-    });
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    //
+    //
+    // auth
+    //     .createUserWithEmailAndPassword(
+    //         email: _emailController.text, password: _passwordController.text)
+    //     .then((_) {
+    //   print('User created');
+    //
+    //   // user.sendEmailVerification().then((_) {
+    //   //   print('Verification email sent');
+    //   //   triggerEmailVerification();
+    //   // });
+    // });
+
+    // new Future.delayed(const Duration(seconds: 20), () {
+    //   // deleayed code here
+    //   print('Delayed execution');
+    //   user.sendEmailVerification().then((_) {
+    //     print('Delayed verification email sent');
+    //     triggerEmailVerification();
+    //     setState(() {
+    //       _pageState = 11;
+    //     });
+    //   });
+    // });
   }
 
   triggerEmailVerification() {
