@@ -1,9 +1,11 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:repara_latam/blocs/application_bloc.dart';
 import 'package:repara_latam/main.dart';
@@ -36,6 +38,30 @@ class _AllHomepageState extends State<AllHomepage> {
   GoogleMapController _mapController;
   BitmapDescriptor _markerIcon;
   Worker _selectedWorker;
+
+  String _pathImageFromGallery;
+  PickedFile _filePictureFromCamera;
+
+  void _showPhotoLibrary() async {
+    final file = await ImagePicker().getImage(source: ImageSource.gallery);
+    print(file.path);
+
+    setState(() {
+      _pathImageFromGallery = file.path;
+      _filePictureFromCamera = null;
+    });
+  }
+
+  void _openCamera(BuildContext context) async {
+    final pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
+    setState(() {
+      _filePictureFromCamera = pickedFile;
+      _pathImageFromGallery = null;
+    });
+    //Navigator.pop(context);
+  }
 
   @override
   void initState() {
@@ -386,279 +412,6 @@ class _AllHomepageState extends State<AllHomepage> {
                                                 Set.from(allMarkersRenderd),
                                           ),
                               ),
-                              //STARS
-                              // STARS
-                              // Stack(
-                              //   children: [
-                              //     // GOLDEN STAR
-                              //     Positioned(
-                              //       top: 70,
-                              //       left: 21,
-                              //       width: 100,
-                              //       height: 100,
-                              //       child: GestureDetector(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             _currentScreen = 50;
-                              //           });
-                              //         },
-                              //         child: Stack(
-                              //           children: [
-                              //             Align(
-                              //               alignment: Alignment.center,
-                              //               child: Stack(
-                              //                 alignment:
-                              //                     AlignmentDirectional.center,
-                              //                 children: [
-                              //                   Icon(Icons.location_on,
-                              //                       size: 75, color: _coral),
-                              //                   Icon(Icons.location_on,
-                              //                       size: 70,
-                              //                       color: Colors.white),
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             Container(
-                              //               margin: EdgeInsets.only(
-                              //                 bottom: 21,
-                              //               ),
-                              //               child: Align(
-                              //                 alignment: Alignment.center,
-                              //                 child: Icon(
-                              //                     Icons.star_rate_rounded,
-                              //                     size: 35,
-                              //                     color: Colors.amberAccent),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     // SILVER STAR
-                              //     Positioned(
-                              //       top: 140,
-                              //       left: 280,
-                              //       width: 100,
-                              //       height: 100,
-                              //       child: GestureDetector(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             _currentScreen = 50;
-                              //           });
-                              //         },
-                              //         child: Stack(
-                              //           children: [
-                              //             Align(
-                              //               alignment: Alignment.center,
-                              //               child: Stack(
-                              //                 alignment:
-                              //                     AlignmentDirectional.center,
-                              //                 children: [
-                              //                   Icon(Icons.location_on,
-                              //                       size: 75, color: _coral),
-                              //                   Icon(Icons.location_on,
-                              //                       size: 70,
-                              //                       color: Colors.white),
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             Container(
-                              //               margin: EdgeInsets.only(
-                              //                 bottom: 21,
-                              //               ),
-                              //               child: Align(
-                              //                 alignment: Alignment.center,
-                              //                 child: Icon(
-                              //                   Icons.star_rate_rounded,
-                              //                   size: 35,
-                              //                   color: Color(0xFFBDEDEDE),
-                              //                 ),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     // GOLDEN STAR
-                              //     Positioned(
-                              //       top: 280,
-                              //       left: 140,
-                              //       width: 100,
-                              //       height: 100,
-                              //       child: GestureDetector(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             _currentScreen = 50;
-                              //           });
-                              //         },
-                              //         child: Stack(
-                              //           children: [
-                              //             Align(
-                              //               alignment: Alignment.center,
-                              //               child: Stack(
-                              //                 alignment:
-                              //                     AlignmentDirectional.center,
-                              //                 children: [
-                              //                   Icon(Icons.location_on,
-                              //                       size: 75, color: _coral),
-                              //                   Icon(Icons.location_on,
-                              //                       size: 70,
-                              //                       color: Colors.white),
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             Container(
-                              //               margin: EdgeInsets.only(
-                              //                 bottom: 21,
-                              //               ),
-                              //               child: Align(
-                              //                 alignment: Alignment.center,
-                              //                 child: Icon(
-                              //                     Icons.star_rate_rounded,
-                              //                     size: 35,
-                              //                     color: Colors.amberAccent),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     // GOLDEN STAR
-                              //     Positioned(
-                              //       top: 350,
-                              //       left: 280,
-                              //       width: 100,
-                              //       height: 100,
-                              //       child: GestureDetector(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             _currentScreen = 50;
-                              //           });
-                              //         },
-                              //         child: Stack(
-                              //           children: [
-                              //             Align(
-                              //               alignment: Alignment.center,
-                              //               child: Stack(
-                              //                 alignment:
-                              //                     AlignmentDirectional.center,
-                              //                 children: [
-                              //                   Icon(Icons.location_on,
-                              //                       size: 75, color: _coral),
-                              //                   Icon(Icons.location_on,
-                              //                       size: 70,
-                              //                       color: Colors.white),
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             Container(
-                              //               margin: EdgeInsets.only(
-                              //                 bottom: 21,
-                              //               ),
-                              //               child: Align(
-                              //                 alignment: Alignment.center,
-                              //                 child: Icon(
-                              //                     Icons.star_rate_rounded,
-                              //                     size: 35,
-                              //                     color: Colors.amberAccent),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     // BRONZE STAR
-                              //     Positioned(
-                              //       top: 420,
-                              //       left: 140,
-                              //       width: 100,
-                              //       height: 100,
-                              //       child: GestureDetector(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             _currentScreen = 50;
-                              //           });
-                              //         },
-                              //         child: Stack(
-                              //           children: [
-                              //             Align(
-                              //               alignment: Alignment.center,
-                              //               child: Stack(
-                              //                 alignment:
-                              //                     AlignmentDirectional.center,
-                              //                 children: [
-                              //                   Icon(Icons.location_on,
-                              //                       size: 75, color: _coral),
-                              //                   Icon(Icons.location_on,
-                              //                       size: 70,
-                              //                       color: Colors.white),
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             Container(
-                              //               margin: EdgeInsets.only(
-                              //                 bottom: 21,
-                              //               ),
-                              //               child: Align(
-                              //                 alignment: Alignment.center,
-                              //                 child: Icon(
-                              //                   Icons.star_rate_rounded,
-                              //                   size: 35,
-                              //                   color: Color(0xFFEBB580),
-                              //                 ),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //     // SILVER STAR
-                              //     Positioned(
-                              //       top: 490,
-                              //       left: 77,
-                              //       width: 100,
-                              //       height: 100,
-                              //       child: GestureDetector(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             _currentScreen = 50;
-                              //           });
-                              //         },
-                              //         child: Stack(
-                              //           children: [
-                              //             Align(
-                              //               alignment: Alignment.center,
-                              //               child: Stack(
-                              //                 alignment:
-                              //                     AlignmentDirectional.center,
-                              //                 children: [
-                              //                   Icon(Icons.location_on,
-                              //                       size: 75, color: _coral),
-                              //                   Icon(Icons.location_on,
-                              //                       size: 70,
-                              //                       color: Colors.white),
-                              //                 ],
-                              //               ),
-                              //             ),
-                              //             Container(
-                              //               margin: EdgeInsets.only(
-                              //                 bottom: 21,
-                              //               ),
-                              //               child: Align(
-                              //                 alignment: Alignment.center,
-                              //                 child: Icon(
-                              //                   Icons.star_rate_rounded,
-                              //                   size: 35,
-                              //                   color: Color(0xFFBDEDEDE),
-                              //                 ),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
                             ],
                           ),
                         ),
@@ -848,51 +601,62 @@ class _AllHomepageState extends State<AllHomepage> {
                                       ),
                                     ),
                                     // TAKE PICTURE
-                                    Stack(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(top: 21),
-                                          padding: EdgeInsets.all(21),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.75,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.75,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: _coral, width: 2),
-                                          ),
-                                          child: Image.asset(
-                                              "assets/images/boots_square_compressed.png"),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.75),
-                                            width: 50,
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(100),
-                                                ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _openCamera(context);
+                                        //print('Take picture clicked');
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.only(top: 21),
+                                              padding: EdgeInsets.all(21),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.75,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.75,
+                                              decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: _coral, width: 2),
-                                                color: Theme.of(context)
-                                                    .scaffoldBackgroundColor),
-                                            child: Icon(
-                                              Icons.camera_alt_outlined,
-                                              color: _coral,
+                                              ),
+                                              child: _filePictureFromCamera ==
+                                                      null
+                                                  ? Image.asset(
+                                                      "assets/images/boots_square_compressed.png")
+                                                  : Image.file(File(
+                                                      _filePictureFromCamera
+                                                          .path))),
+                                          Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.75),
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(100),
+                                                  ),
+                                                  border: Border.all(
+                                                      color: _coral, width: 2),
+                                                  color: Theme.of(context)
+                                                      .scaffoldBackgroundColor),
+                                              child: Icon(
+                                                Icons.camera_alt_outlined,
+                                                color: _coral,
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                     // SEPARATOR
                                     Padding(
@@ -921,29 +685,39 @@ class _AllHomepageState extends State<AllHomepage> {
                                       ),
                                     ),
                                     // UPLOAD FILE
-                                    Column(
-                                      children: [
-                                        Icon(
-                                          Icons.image_outlined,
-                                          color: _coral,
-                                          size: 72,
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(top: 7),
-                                          child: Text(
-                                            'Selecciona una imagen de la galería',
-                                            style: TextStyle(color: _darkBlue),
+                                    GestureDetector(
+                                      onTap: _showPhotoLibrary,
+                                      //pickImage,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                              child: _pathImageFromGallery ==
+                                                      null
+                                                  ? Icon(
+                                                      Icons.image_outlined,
+                                                      color: _coral,
+                                                      size: 72,
+                                                    )
+                                                  : Image.file(File(
+                                                      _pathImageFromGallery))),
+                                          Container(
+                                            margin: EdgeInsets.only(top: 7),
+                                            child: Text(
+                                              'Selecciona una imagen de la galería',
+                                              style:
+                                                  TextStyle(color: _darkBlue),
+                                            ),
                                           ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(top: 7),
-                                          child: Text(
-                                            'foto_botas.jpg',
-                                            style: TextStyle(
-                                                color: _colorInactiveOption),
+                                          Container(
+                                            margin: EdgeInsets.only(top: 7),
+                                            child: Text(
+                                              'foto_botas.jpg',
+                                              style: TextStyle(
+                                                  color: _colorInactiveOption),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                     // CONTINUE
                                     Container(
