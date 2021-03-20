@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:repara_latam/models/tos_model.dart';
 import 'package:repara_latam/screens/app_body.dart';
 
 import 'components/login_page_text_field.dart';
@@ -58,6 +59,7 @@ class _AllLoginState extends State<AllLogin> {
   //
   // 0: First Screen
   // 10: Registrarse
+  // 101: Términos y Condiciones
   // 11: Validación
   // 20: Entrar
   // 21: Recuperar contraseña
@@ -71,11 +73,12 @@ class _AllLoginState extends State<AllLogin> {
 
   double _firstScreenXOffset = 0;
   double _registrarseXOffset = 0;
+  double _terminosXOffset = 0;
   double _validacionXOffset = 0;
   double _entrarXOffset = 0;
   double _recuperarXOffset = 0;
 
-  bool _tACCheckbox = false;
+  bool _isToSChecked = false;
 
   @override
   void initState() {
@@ -93,6 +96,12 @@ class _AllLoginState extends State<AllLogin> {
     super.dispose();
   }
 
+  onClickSignUpTerminos() {
+    setState(() {
+      _pageState = 11;
+    });
+  }
+
   onClickSignUpSiguiente() async {
     print('Sign Up Initialized');
 
@@ -108,7 +117,7 @@ class _AllLoginState extends State<AllLogin> {
         FocusScope.of(context).unfocus();
 
         setState(() {
-          _pageState = 11;
+          _pageState = 101;
         });
       });
     } on FirebaseAuthException catch (e) {
@@ -183,6 +192,7 @@ class _AllLoginState extends State<AllLogin> {
       case 0:
         _firstScreenXOffset = 0;
         _registrarseXOffset = _windowWidth;
+        _terminosXOffset = _windowWidth;
         _validacionXOffset = _windowWidth;
         _entrarXOffset = _windowWidth;
         _recuperarXOffset = _windowWidth;
@@ -190,11 +200,18 @@ class _AllLoginState extends State<AllLogin> {
       case 10:
         _firstScreenXOffset = -_windowWidth;
         _registrarseXOffset = 0;
+        _terminosXOffset = _windowWidth;
+        //_validacionXOffset = _windowWidth;
+        break;
+      case 101:
+        _firstScreenXOffset = -_windowWidth;
+        _registrarseXOffset = -_windowWidth;
+        _terminosXOffset = 0;
         _validacionXOffset = _windowWidth;
         break;
       case 11:
         _firstScreenXOffset = -_windowWidth;
-        _registrarseXOffset = -_windowWidth;
+        _terminosXOffset = -_windowWidth;
         _validacionXOffset = 0;
         break;
       case 20:
@@ -217,9 +234,14 @@ class _AllLoginState extends State<AllLogin> {
             _pageState = 0;
           });
           break;
-        case 11:
+        case 101:
           setState(() {
             _pageState = 10;
+          });
+          break;
+        case 11:
+          setState(() {
+            _pageState = 101;
           });
           break;
         case 20:
@@ -445,35 +467,6 @@ class _AllLoginState extends State<AllLogin> {
                                   obscure: true,
                                   onChanged: (value) {},
                                 ),
-                                // TaC CHECKBOX
-                                Visibility(
-                                  visible: !_isSmallScreen,
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Checkbox(
-                                            value: _tACCheckbox,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _tACCheckbox = value;
-                                              });
-                                            }),
-                                        Flexible(
-                                          child: Container(
-                                            width: 210,
-                                            child: Text(
-                                                'He leído y acepto los términos y condiciones de uso.'),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                                 Expanded(flex: 4, child: Container()),
                                 // BTN SIGUIENTE
                                 Container(
@@ -484,6 +477,132 @@ class _AllLoginState extends State<AllLogin> {
                                     },
                                     child: PrimaryButton(
                                       btnText: 'SIGUIENTE',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // TÉRMINOS Y CONDICIONES
+                Center(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.fastLinearToSlowEaseIn,
+                    height: MediaQuery.of(context).size.height * 0.91,
+                    width: MediaQuery.of(context).size.width * 0.91,
+                    transform:
+                        Matrix4.translationValues(_terminosXOffset, 0, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(21),
+                    ),
+                    child: Column(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // HEADER
+                        Container(
+                          width: double.infinity,
+                          height: 91,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF021028),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(21),
+                              topRight: Radius.circular(21),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Términos de Servicio',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 7),
+                            ),
+                          ),
+                        ),
+                        // BODY
+                        Expanded(
+                          child: Container(
+                            //height: 50,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 35, vertical: 21),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Text(temporaryToS[0].tos),
+                                  ),
+                                ),
+
+                                // TaC CHECKBOX
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Checkbox(
+                                          value: _isToSChecked,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _isToSChecked = value;
+                                            });
+                                          }),
+                                      Flexible(
+                                        child: Container(
+                                          width: 210,
+                                          child: Text(
+                                              'He leído y acepto los términos y condiciones de uso.'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                //Expanded(flex: 4, child: Container()),
+                                // BTN SIGUIENTE
+                                Container(
+                                  child: GestureDetector(
+                                    onTap: !_isToSChecked
+                                        ? null
+                                        : () => onClickSignUpTerminos(),
+                                    child: Container(
+                                      //margin: EdgeInsets.symmetric(vertical: 14, horizontal: 56),
+                                      padding: EdgeInsets.all(21),
+                                      height: 70,
+                                      width: MediaQuery.of(context).size.width /
+                                          1.4,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 0,
+                                            blurRadius: 7,
+                                            offset: Offset(3, 3),
+                                          )
+                                        ],
+                                        color: !_isToSChecked
+                                            ? Colors.grey
+                                            : Color(0xFFBFF4949),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'SIGUIENTE',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 21),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
