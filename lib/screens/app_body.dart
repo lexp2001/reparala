@@ -823,7 +823,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   Container(
                                     height: 210,
                                     transform:
-                                        Matrix4.translationValues(0, -25, 0),
+                                        Matrix4.translationValues(0, -35, 0),
                                     child: Image.asset(
                                       _selectedWorker.coverImage,
                                       fit: BoxFit.cover,
