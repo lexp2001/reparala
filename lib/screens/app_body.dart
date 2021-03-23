@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:repara_latam/blocs/application_bloc.dart';
 import 'package:repara_latam/main.dart';
@@ -39,8 +40,11 @@ class _AllHomepageState extends State<AllHomepage> {
   BitmapDescriptor _markerIcon;
   Worker _selectedWorker;
 
+  bool _isMessageWithWorker = false;
+
   String _pathImageFromGallery;
   PickedFile _filePictureFromCamera;
+  bool _isImageUploaded = false;
 
   void _showPhotoLibrary() async {
     final file = await ImagePicker().getImage(source: ImageSource.gallery);
@@ -63,9 +67,21 @@ class _AllHomepageState extends State<AllHomepage> {
     //Navigator.pop(context);
   }
 
+  bool _keyboardVisible = false;
+
   @override
   void initState() {
     super.initState();
+
+    KeyboardVisibilityNotification().addNewListener(
+      onChange: (bool visible) {
+        setState(() {
+          _keyboardVisible = visible;
+          print("Is keyboard visible?" + visible.toString());
+        });
+      },
+    );
+
     _setMarkerIcon();
 
     _selectedWorker = new Worker(
@@ -325,6 +341,7 @@ class _AllHomepageState extends State<AllHomepage> {
         case 21:
           setState(() {
             _currentScreen = 20;
+            _isMessageWithWorker = false;
           });
           break;
         case 30:
@@ -915,6 +932,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                     //print('Contactar');
                                     _currentScreen = 21;
                                     _selectedOption = 2;
+                                    _isMessageWithWorker = true;
                                   });
                                 },
                                 child: Container(
@@ -1383,27 +1401,49 @@ class _AllHomepageState extends State<AllHomepage> {
                                         child: SingleChildScrollView(
                                           child: Column(
                                             children: [
-                                              Container(
-                                                width: _windowWidth * 0.9,
+                                              Visibility(
+                                                visible: _isMessageWithWorker,
+                                                child: Container(
+                                                  width: _windowWidth * 0.9,
+                                                  child:
+                                                  _filePictureFromCamera != null ?
+                                                  Image.file(File(
+                                                      _filePictureFromCamera
+                                                          .path)) :
+                                                    _pathImageFromGallery != null ?
+                                                    Image.file(File(
+                                                        _pathImageFromGallery)) :
+                                                    Image.asset(
+                                                      'assets/images/temp_chat.png',
+                                                      fit: BoxFit.fitWidth,
+                                                    ),
+                                                  )
+                                                ),
+                                              Visibility(
+                                                visible: !_isMessageWithWorker,
                                                 child: Image.asset(
                                                   'assets/images/temp_chat.png',
                                                   fit: BoxFit.fitWidth,
+                                                  // ),
                                                 ),
                                               ),
-                                              //Expanded(child: Container()),
                                             ],
                                           ),
                                         ),
                                       ),
                                       // INPUT BAR
-                                      Container(
+                                      AnimatedContainer(
+                                        duration: Duration(milliseconds: 1000),
+                                        curve: Curves.fastLinearToSlowEaseIn,
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 21),
                                         margin: EdgeInsets.only(
-                                            bottom: 21, top: 21),
+                                            bottom: _keyboardVisible?
+                                            250 : 21,
+                                            top: 21),
                                         //padding: EdgeInsets.all(21),
                                         height: 49,
-                                        width: _windowWidth * 0.77,
+                                        width: _windowWidth * 0.91,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(100),
@@ -1423,9 +1463,9 @@ class _AllHomepageState extends State<AllHomepage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
-                                              width: _windowWidth * 0.42,
+                                              width: _windowWidth * 0.56,
                                               child: TextField(
-                                                enabled: false,
+                                                enabled: true,
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                   hintText:
