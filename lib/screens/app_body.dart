@@ -44,7 +44,8 @@ class _AllHomepageState extends State<AllHomepage> {
 
   String _pathImageFromGallery;
   PickedFile _filePictureFromCamera;
-  bool _isImageUploaded = false;
+
+  TextEditingController _userRepairQuery = new TextEditingController();
 
   void _showPhotoLibrary() async {
     final file = await ImagePicker().getImage(source: ImageSource.gallery);
@@ -224,6 +225,8 @@ class _AllHomepageState extends State<AllHomepage> {
     switch (_currentScreen) {
       case 10:
         setState(() {
+          _isMessageWithWorker = false;
+
           _screen10XOffset = 0;
           _screen11XOffset = _windowWidth;
           _screen12XOffset = _windowWidth;
@@ -248,6 +251,8 @@ class _AllHomepageState extends State<AllHomepage> {
         _screen50XOffset = _windowWidth;
         break;
       case 20:
+        _isMessageWithWorker = false;
+
         _screen20XOffset = 0;
         _screen21YOffset = -_windowHeight;
         break;
@@ -256,6 +261,8 @@ class _AllHomepageState extends State<AllHomepage> {
         _screen21YOffset = 0;
         break;
       case 30:
+        _isMessageWithWorker = false;
+
         _screen30XOffset = 0;
         _screen31XOffset = _windowWidth;
         break;
@@ -264,6 +271,7 @@ class _AllHomepageState extends State<AllHomepage> {
         _screen31XOffset = 0;
         break;
       case 40:
+        _isMessageWithWorker = false;
         break;
       case 50:
         _screen12XOffset = -_windowWidth;
@@ -374,8 +382,9 @@ class _AllHomepageState extends State<AllHomepage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
+          Stack(
             children: [
+              // MAIN 4 PAGES
               Container(
                 height: _windowHeight - 70,
                 //color: Colors.greenAccent,
@@ -534,6 +543,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       margin: EdgeInsets.only(top: 21),
                                       width: _isSmallScreen ? 280 : 320,
                                       child: TextField(
+                                        controller: _userRepairQuery,
                                         maxLength: 30,
                                         keyboardType: TextInputType.text,
                                         maxLines: 2,
@@ -560,6 +570,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                       setState(() {
                                         _currentScreen = 11;
                                       });
+                                      FocusManager.instance.primaryFocus
+                                          .unfocus();
                                     },
                                     child: Container(
                                       margin: EdgeInsets.only(
@@ -1402,29 +1414,86 @@ class _AllHomepageState extends State<AllHomepage> {
                                           child: Column(
                                             children: [
                                               Visibility(
-                                                visible: _isMessageWithWorker,
-                                                child: Container(
-                                                  width: _windowWidth * 0.9,
-                                                  child:
-                                                  _filePictureFromCamera != null ?
-                                                  Image.file(File(
-                                                      _filePictureFromCamera
-                                                          .path)) :
-                                                    _pathImageFromGallery != null ?
-                                                    Image.file(File(
-                                                        _pathImageFromGallery)) :
-                                                    Image.asset(
-                                                      'assets/images/temp_chat.png',
-                                                      fit: BoxFit.fitWidth,
-                                                    ),
-                                                  )
-                                                ),
+                                                  visible: _isMessageWithWorker,
+                                                  child: Container(
+                                                    //color: Colors.red,
+                                                    height: _isSmallScreen
+                                                        ? _windowHeight * 0.28
+                                                        : _windowHeight * 0.35,
+                                                    width: _windowWidth * 0.9,
+                                                    child: _filePictureFromCamera !=
+                                                            null
+                                                        ? Align(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Image.file(File(
+                                                                _filePictureFromCamera
+                                                                    .path)),
+                                                          )
+                                                        : _pathImageFromGallery !=
+                                                                null
+                                                            ? Align(
+                                                                alignment: Alignment
+                                                                    .centerRight,
+                                                                child: Image
+                                                                    .file(File(
+                                                                        _pathImageFromGallery)),
+                                                              )
+                                                            : Align(
+                                                                alignment: Alignment
+                                                                    .centerRight,
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/temp_chat.png',
+                                                                  fit: BoxFit
+                                                                      .fitWidth,
+                                                                ),
+                                                              ),
+                                                  )),
                                               Visibility(
                                                 visible: !_isMessageWithWorker,
                                                 child: Image.asset(
                                                   'assets/images/temp_chat.png',
                                                   fit: BoxFit.fitWidth,
                                                   // ),
+                                                ),
+                                              ),
+                                              // USER REPAIR QUERY MESSAGE
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Visibility(
+                                                  visible: _userRepairQuery !=
+                                                          null ||
+                                                      _isMessageWithWorker,
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 21, right: 21),
+                                                    padding: EdgeInsets.all(21),
+                                                    //height: 49,
+                                                    width: _windowWidth * 0.77,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(
+                                                                100),
+                                                        topRight:
+                                                            Radius.circular(
+                                                                100),
+                                                        bottomLeft:
+                                                            Radius.circular(
+                                                                100),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      '¡Hola! Hoy quiero reparar: ' +
+                                                          _userRepairQuery.text,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -1438,8 +1507,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 21),
                                         margin: EdgeInsets.only(
-                                            bottom: _keyboardVisible?
-                                            250 : 21,
+                                            bottom: _keyboardVisible ? 250 : 21,
                                             top: 21),
                                         //padding: EdgeInsets.all(21),
                                         height: 49,
@@ -2340,6 +2408,32 @@ class _AllHomepageState extends State<AllHomepage> {
                       ],
                     ),
                   ],
+                ),
+              ),
+              // BACK BUTTON
+              SafeArea(
+                child: GestureDetector(
+                  onTap: () {
+                    onWillPopOptions();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 7),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(100),
+                      ),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        size: 21,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
