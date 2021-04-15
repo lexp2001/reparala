@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bugfender/flutter_bugfender.dart';
 import 'package:repara_latam/models/tos_model.dart';
 import 'package:repara_latam/screens/app_body.dart';
 
@@ -25,6 +26,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FlutterBugfender.init(
+      "JeeRh6cC5HWdWrEV8hDEPod0e08cTEUS",
+      enableAndroidLogcatLogging: true,
+      enableCrashReporting: true,
+      enableUIEventLogging: true,
+    );
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
