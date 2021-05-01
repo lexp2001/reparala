@@ -13,7 +13,10 @@ import 'package:repara_latam/main.dart';
 import 'package:repara_latam/models/messages.dart';
 import 'package:repara_latam/models/work_order_model.dart';
 import 'package:repara_latam/models/workers_model.dart';
+import 'package:repara_latam/screens/encargos.dart';
 import 'package:repara_latam/services/worker_service.dart';
+
+import 'desarrollo_placeholder.dart';
 
 class AppBody extends StatelessWidget {
   @override
@@ -147,7 +150,7 @@ class _AllHomepageState extends State<AllHomepage> {
         markerId: MarkerId('0'),
         position: LatLng(-33.445995, -70.667057),
         infoWindow:
-            InfoWindow(title: 'Punto 1', snippet: 'Descripción Punto 1'),
+        InfoWindow(title: 'Punto 1', snippet: 'Descripción Punto 1'),
         icon: _markerIcon,
       ));
 
@@ -215,8 +218,14 @@ class _AllHomepageState extends State<AllHomepage> {
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
 
-    _windowHeight = MediaQuery.of(context).size.height;
-    _windowWidth = MediaQuery.of(context).size.width;
+    _windowHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    _windowWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     if (_windowWidth <= 400) {
       _isSmallScreen = true;
@@ -287,14 +296,16 @@ class _AllHomepageState extends State<AllHomepage> {
     _signOut() {
       _selectedOption = null;
       _currentScreen = null;
-      auth.signOut().then((value) => Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => MyApp())));
+      auth.signOut().then((value) =>
+          Navigator.of(context)
+              .pushReplacement(MaterialPageRoute(builder: (context) => MyApp())));
     }
 
     Future<bool> _confirmSignOut() {
       return showDialog(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (context) =>
+              AlertDialog(
                 title: Center(child: Text('Salir')),
                 content: Text(
                   '¿Deseas salir de la aplicación o salir de tu cuenta?',
@@ -328,8 +339,8 @@ class _AllHomepageState extends State<AllHomepage> {
     Future<bool> onWillPopOptions() {
       switch (_currentScreen) {
         case 10:
-          // _selectedOption = null;
-          // _currentScreen = null;
+        // _selectedOption = null;
+        // _currentScreen = null;
           _confirmSignOut();
           //signOut();
           break;
@@ -400,9 +411,12 @@ class _AllHomepageState extends State<AllHomepage> {
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow.withOpacity(0.21),
                           width: _windowWidth,
-                          height: MediaQuery.of(context).size.height,
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height,
                           transform:
-                              Matrix4.translationValues(_screen12XOffset, 0, 0),
+                          Matrix4.translationValues(_screen12XOffset, 0, 0),
                           child: Stack(
                             children: [
                               // MAP PLACEHOLDER
@@ -414,29 +428,29 @@ class _AllHomepageState extends State<AllHomepage> {
                                 // ),
 
                                 child:
-                                    (applicationBloc.currentLocation == null ||
-                                            allMarkersRenderd.length == 0)
-                                        ? Center(
-                                            child: CircularProgressIndicator(),
-                                          )
-                                        : GoogleMap(
-                                            onMapCreated: _onMapCreated,
-                                            mapType: MapType.normal,
-                                            myLocationEnabled: true,
-                                            initialCameraPosition: CameraPosition(
-                                                target: LatLng(-33.445995, -70.667057
+                                (applicationBloc.currentLocation == null ||
+                                    allMarkersRenderd.length == 0)
+                                    ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                                    : GoogleMap(
+                                  onMapCreated: _onMapCreated,
+                                  mapType: MapType.normal,
+                                  myLocationEnabled: true,
+                                  initialCameraPosition: CameraPosition(
+                                      target: LatLng(-33.445995, -70.667057
 
-                                                    // SETS USER LOCATION
-                                                    // applicationBloc
-                                                    //     .currentLocation.latitude,
-                                                    // applicationBloc
-                                                    //     .currentLocation.longitude
+                                        // SETS USER LOCATION
+                                        // applicationBloc
+                                        //     .currentLocation.latitude,
+                                        // applicationBloc
+                                        //     .currentLocation.longitude
 
-                                                    ),
-                                                zoom: 13),
-                                            markers:
-                                                Set.from(allMarkersRenderd),
-                                          ),
+                                      ),
+                                      zoom: 13),
+                                  markers:
+                                  Set.from(allMarkersRenderd),
+                                ),
                               ),
                             ],
                           ),
@@ -495,7 +509,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                       width: 56,
                                       height: 56,
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context)
+                                        color: Theme
+                                            .of(context)
                                             .scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(100),
@@ -514,7 +529,10 @@ class _AllHomepageState extends State<AllHomepage> {
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow,
-                          height: MediaQuery.of(context).size.height * 0.75,
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * 0.75,
                           transform: Matrix4.translationValues(
                               _screen10XOffset, 100, 0),
                           child: Padding(
@@ -582,7 +600,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       height: 63,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(100),
+                                          BorderRadius.circular(100),
                                           color: _isUserQueryValidated
                                               ? _coral
                                               : _darkBlue.withOpacity(0.07)),
@@ -640,43 +658,47 @@ class _AllHomepageState extends State<AllHomepage> {
                                           Container(
                                               margin: EdgeInsets.only(top: 21),
                                               padding: EdgeInsets.all(21),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                              width: MediaQuery
+                                                  .of(context)
+                                                  .size
+                                                  .width *
                                                   0.75,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                              height: MediaQuery
+                                                  .of(context)
+                                                  .size
+                                                  .width *
                                                   0.75,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: _coral, width: 2),
                                               ),
                                               child: _filePictureFromCamera ==
-                                                      null
+                                                  null
                                                   ? Image.asset(
-                                                      "assets/images/boots_square_compressed.png")
+                                                  "assets/images/boots_square_compressed.png")
                                                   : Image.file(File(
-                                                      _filePictureFromCamera
-                                                          .path))),
+                                                  _filePictureFromCamera
+                                                      .path))),
                                           Align(
                                             alignment: Alignment.bottomCenter,
                                             child: Container(
                                               margin: EdgeInsets.only(
-                                                  top: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
+                                                  top: MediaQuery
+                                                      .of(context)
+                                                      .size
+                                                      .width *
                                                       0.75),
                                               width: 50,
                                               height: 50,
                                               decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.all(
+                                                  BorderRadius.all(
                                                     Radius.circular(100),
                                                   ),
                                                   border: Border.all(
                                                       color: _coral, width: 2),
-                                                  color: Theme.of(context)
+                                                  color: Theme
+                                                      .of(context)
                                                       .scaffoldBackgroundColor),
                                               child: Icon(
                                                 Icons.camera_alt_outlined,
@@ -693,7 +715,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                           vertical: 21),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '--------------',
@@ -721,20 +743,20 @@ class _AllHomepageState extends State<AllHomepage> {
                                         children: [
                                           Container(
                                               child: _pathImageFromGallery ==
-                                                      null
+                                                  null
                                                   ? Icon(
-                                                      Icons.image_outlined,
-                                                      color: _coral,
-                                                      size: 72,
-                                                    )
+                                                Icons.image_outlined,
+                                                color: _coral,
+                                                size: 72,
+                                              )
                                                   : Image.file(File(
-                                                      _pathImageFromGallery))),
+                                                  _pathImageFromGallery))),
                                           Container(
                                             margin: EdgeInsets.only(top: 7),
                                             child: Text(
                                               'Selecciona una imagen de la galería',
                                               style:
-                                                  TextStyle(color: _darkBlue),
+                                              TextStyle(color: _darkBlue),
                                             ),
                                           ),
                                           Container(
@@ -751,7 +773,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                     // CONTINUE
                                     Container(
                                       margin:
-                                          EdgeInsets.only(top: 70, bottom: 28),
+                                      EdgeInsets.only(top: 70, bottom: 28),
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -788,7 +810,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       height: 63,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(100),
+                                          BorderRadius.circular(100),
                                           color: _isUserQueryValidated
                                               ? _coral
                                               : _darkBlue.withOpacity(0.07)),
@@ -808,11 +830,13 @@ class _AllHomepageState extends State<AllHomepage> {
                         AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
-                          color: Theme.of(context).scaffoldBackgroundColor,
+                          color: Theme
+                              .of(context)
+                              .scaffoldBackgroundColor,
                           //width: _windowWidth,
                           height: _windowHeight,
                           transform:
-                              Matrix4.translationValues(_screen50XOffset, 0, 0),
+                          Matrix4.translationValues(_screen50XOffset, 0, 0),
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
@@ -823,7 +847,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   Container(
                                     height: 210,
                                     transform:
-                                        Matrix4.translationValues(0, -35, 0),
+                                    Matrix4.translationValues(0, -35, 0),
                                     child: Image.asset(
                                       _selectedWorker.coverImage,
                                       fit: BoxFit.cover,
@@ -869,7 +893,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       margin: EdgeInsets.only(top: 7),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Icon(
                                             Icons.star_rate_rounded,
@@ -968,11 +992,13 @@ class _AllHomepageState extends State<AllHomepage> {
                           //width: _windowWidth,
                           //height: MediaQuery.of(context).size.height * 0.77,
                           transform:
-                              Matrix4.translationValues(_screen52XOffset, 0, 0),
+                          Matrix4.translationValues(_screen52XOffset, 0, 0),
                           child: Container(
                             width: _windowWidth,
                             height: _windowHeight - 70,
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                            color: Theme
+                                .of(context)
+                                .scaffoldBackgroundColor,
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -1012,7 +1038,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'MENSAJES',
@@ -1043,7 +1069,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                     width: 56,
                                     height: 56,
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context)
+                                      color: Theme
+                                          .of(context)
                                           .scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(100),
@@ -1061,7 +1088,7 @@ class _AllHomepageState extends State<AllHomepage> {
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
                           transform:
-                              Matrix4.translationValues(_screen20XOffset, 0, 0),
+                          Matrix4.translationValues(_screen20XOffset, 0, 0),
                           child: Container(
                             margin: EdgeInsets.only(top: 100),
                             width: _windowWidth,
@@ -1109,7 +1136,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                               hintText: 'Buscar...',
                                               hintStyle: TextStyle(
                                                 color:
-                                                    _darkBlue.withOpacity(0.49),
+                                                _darkBlue.withOpacity(0.49),
                                               ),
                                             ),
                                           ),
@@ -1148,7 +1175,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                                   width: 70,
                                                   child: ClipRRect(
                                                     borderRadius:
-                                                        BorderRadius.all(
+                                                    BorderRadius.all(
                                                       Radius.circular(100),
                                                     ),
                                                     child: Image.asset(
@@ -1168,29 +1195,29 @@ class _AllHomepageState extends State<AllHomepage> {
                                                             bottom: 10),
                                                         child: Row(
                                                           mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                           children: [
                                                             Text(
                                                               messages[index]
                                                                   .workerId,
                                                               style: TextStyle(
                                                                 fontWeight: messages[index]
-                                                                            .amountUnread !=
-                                                                        '0'
+                                                                    .amountUnread !=
+                                                                    '0'
                                                                     ? FontWeight
-                                                                        .bold
+                                                                    .bold
                                                                     : FontWeight
-                                                                        .w500,
+                                                                    .w500,
                                                                 color: messages[index]
-                                                                            .amountUnread !=
-                                                                        '0'
+                                                                    .amountUnread !=
+                                                                    '0'
                                                                     ? _darkBlue
-                                                                        .withOpacity(
-                                                                            0.84)
+                                                                    .withOpacity(
+                                                                    0.84)
                                                                     : _darkBlue
-                                                                        .withOpacity(
-                                                                            0.77),
+                                                                    .withOpacity(
+                                                                    0.77),
                                                               ),
                                                             ),
                                                             Text(
@@ -1198,16 +1225,16 @@ class _AllHomepageState extends State<AllHomepage> {
                                                                   .timeSent,
                                                               style: TextStyle(
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                                FontWeight
+                                                                    .bold,
                                                                 fontSize: 12,
                                                                 color: messages[index]
-                                                                            .amountUnread !=
-                                                                        '0'
+                                                                    .amountUnread !=
+                                                                    '0'
                                                                     ? _coral
                                                                     : _darkBlue
-                                                                        .withOpacity(
-                                                                            0.35),
+                                                                    .withOpacity(
+                                                                    0.35),
                                                               ),
                                                             ),
                                                           ],
@@ -1216,8 +1243,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                                       // MESSAGE AND NOTIFICATION
                                                       Row(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                        CrossAxisAlignment
+                                                            .start,
                                                         children: [
                                                           // MESSAGE
                                                           Expanded(
@@ -1228,44 +1255,44 @@ class _AllHomepageState extends State<AllHomepage> {
                                                               style: TextStyle(
                                                                   height: 1.4),
                                                               overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                              TextOverflow
+                                                                  .ellipsis,
                                                             ),
                                                           ),
                                                           // NOTIFICATION
                                                           Visibility(
                                                             visible: messages[
-                                                                        index]
-                                                                    .amountUnread !=
+                                                            index]
+                                                                .amountUnread !=
                                                                 '0',
                                                             child: Container(
                                                               margin: EdgeInsets
                                                                   .only(
-                                                                      left: 14),
+                                                                  left: 14),
                                                               width: 21,
                                                               height: 21,
                                                               decoration:
-                                                                  BoxDecoration(
+                                                              BoxDecoration(
                                                                 color: _coral,
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .all(
+                                                                BorderRadius
+                                                                    .all(
                                                                   Radius
                                                                       .circular(
-                                                                          21),
+                                                                      21),
                                                                 ),
                                                               ),
                                                               child: Center(
                                                                 child: Text(
                                                                   messages[
-                                                                          index]
+                                                                  index]
                                                                       .amountUnread,
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                          12,
+                                                                      12,
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                       color: Colors
                                                                           .white),
                                                                 ),
@@ -1295,7 +1322,7 @@ class _AllHomepageState extends State<AllHomepage> {
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
                           transform:
-                              Matrix4.translationValues(0, _screen21YOffset, 0),
+                          Matrix4.translationValues(0, _screen21YOffset, 0),
                           child: Container(
                             width: _windowWidth,
                             height: _windowHeight - 70,
@@ -1326,7 +1353,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                             // PROFILE PICTURE
                                             Container(
                                               margin:
-                                                  EdgeInsets.only(right: 21),
+                                              EdgeInsets.only(right: 21),
                                               height: 70,
                                               width: 70,
                                               child: ClipRRect(
@@ -1343,9 +1370,9 @@ class _AllHomepageState extends State<AllHomepage> {
                                             // NAME AND CATEGORY
                                             Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 // NAME
                                                 Text(
@@ -1369,7 +1396,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                                     fontWeight: FontWeight.w300,
                                                   ),
                                                   overflow:
-                                                      TextOverflow.ellipsis,
+                                                  TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),
@@ -1384,7 +1411,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                   width: _windowWidth,
                                   height: _windowHeight * 0.7,
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context)
+                                    color: Theme
+                                        .of(context)
                                         .scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(35),
@@ -1404,7 +1432,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               color:
-                                                  _darkBlue.withOpacity(0.35)),
+                                              _darkBlue.withOpacity(0.35)),
                                         ),
                                       ),
                                       // CHAT PLACEHOLDER
@@ -1422,33 +1450,33 @@ class _AllHomepageState extends State<AllHomepage> {
                                                         : _windowHeight * 0.35,
                                                     width: _windowWidth * 0.9,
                                                     child: _filePictureFromCamera !=
-                                                            null
+                                                        null
                                                         ? Align(
-                                                            alignment: Alignment
-                                                                .centerRight,
-                                                            child: Image.file(File(
-                                                                _filePictureFromCamera
-                                                                    .path)),
-                                                          )
+                                                      alignment: Alignment
+                                                          .centerRight,
+                                                      child: Image.file(File(
+                                                          _filePictureFromCamera
+                                                              .path)),
+                                                    )
                                                         : _pathImageFromGallery !=
-                                                                null
-                                                            ? Align(
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child: Image
-                                                                    .file(File(
-                                                                        _pathImageFromGallery)),
-                                                              )
-                                                            : Align(
-                                                                alignment: Alignment
-                                                                    .centerRight,
-                                                                child:
-                                                                    Image.asset(
-                                                                  'assets/images/temp_chat.png',
-                                                                  fit: BoxFit
-                                                                      .fitWidth,
-                                                                ),
-                                                              ),
+                                                        null
+                                                        ? Align(
+                                                      alignment: Alignment
+                                                          .centerRight,
+                                                      child: Image
+                                                          .file(File(
+                                                          _pathImageFromGallery)),
+                                                    )
+                                                        : Align(
+                                                      alignment: Alignment
+                                                          .centerRight,
+                                                      child:
+                                                      Image.asset(
+                                                        'assets/images/temp_chat.png',
+                                                        fit: BoxFit
+                                                            .fitWidth,
+                                                      ),
+                                                    ),
                                                   )),
                                               Visibility(
                                                 visible: !_isMessageWithWorker,
@@ -1461,10 +1489,10 @@ class _AllHomepageState extends State<AllHomepage> {
                                               // USER REPAIR QUERY MESSAGE
                                               Align(
                                                 alignment:
-                                                    Alignment.centerRight,
+                                                Alignment.centerRight,
                                                 child: Visibility(
                                                   visible: _userRepairQuery !=
-                                                          null ||
+                                                      null ||
                                                       _isMessageWithWorker,
                                                   child: Container(
                                                     margin: EdgeInsets.only(
@@ -1475,16 +1503,16 @@ class _AllHomepageState extends State<AllHomepage> {
                                                     decoration: BoxDecoration(
                                                       color: Colors.red,
                                                       borderRadius:
-                                                          BorderRadius.only(
+                                                      BorderRadius.only(
                                                         topLeft:
-                                                            Radius.circular(
-                                                                100),
+                                                        Radius.circular(
+                                                            100),
                                                         topRight:
-                                                            Radius.circular(
-                                                                100),
+                                                        Radius.circular(
+                                                            100),
                                                         bottomLeft:
-                                                            Radius.circular(
-                                                                100),
+                                                        Radius.circular(
+                                                            100),
                                                       ),
                                                     ),
                                                     child: Text(
@@ -1514,11 +1542,11 @@ class _AllHomepageState extends State<AllHomepage> {
                                         width: _windowWidth * 0.91,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(100),
+                                          BorderRadius.circular(100),
                                           boxShadow: [
                                             BoxShadow(
                                               color:
-                                                  Colors.grey.withOpacity(0.1),
+                                              Colors.grey.withOpacity(0.1),
                                               spreadRadius: 0,
                                               blurRadius: 7,
                                               offset: Offset(3, 3),
@@ -1528,7 +1556,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
                                               width: _windowWidth * 0.56,
@@ -1537,7 +1565,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
                                                   hintText:
-                                                      'Escribe tu mensaje aquí...',
+                                                  'Escribe tu mensaje aquí...',
                                                   hintStyle: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w500,
@@ -1554,7 +1582,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                               child: Icon(
                                                 Icons.attach_file_rounded,
                                                 color:
-                                                    _darkBlue.withOpacity(0.49),
+                                                _darkBlue.withOpacity(0.49),
                                               ),
                                             ),
                                             // SEND ICON
@@ -1586,827 +1614,10 @@ class _AllHomepageState extends State<AllHomepage> {
                       ],
                     ),
                     // ENCARGOS
-                    Stack(
-                      children: [
-                        //HEADER
-                        Container(
-                          child: Column(
-                            children: [
-                              // TITLE
-                              Container(
-                                width: double.infinity,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                    color: _coral,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(100),
-                                    )),
-                                child: SafeArea(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 77),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'TUS ENCARGOS',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // RIGHT BOTTOM CURVE
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 1800),
-                                curve: Curves.fastLinearToSlowEaseIn,
-                                transform: Matrix4.translationValues(0, 0, 0),
-                                child: Align(
-                                  alignment: Alignment.topRight,
-                                  child: Container(
-                                    width: 56,
-                                    height: 56,
-                                    decoration: BoxDecoration(
-                                        color: _coral,
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(100))),
-                                    child: Container(
-                                      width: 56,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(100),
-                                          bottomLeft: Radius.circular(90),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        // SMALL CARD
-                        AnimatedContainer(
-                          duration: Duration(milliseconds: 1000),
-                          curve: Curves.fastLinearToSlowEaseIn,
-                          transform:
-                              Matrix4.translationValues(_screen30XOffset, 0, 0),
-                          child: Container(
-                            margin: EdgeInsets.only(top: 70),
-                            height: _windowHeight - 140,
-                            child: ListView.builder(
-                              itemBuilder: (context, index) {
-                                return Center(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _currentScreen = 31;
-                                        _selectedWorkOrder = index;
-                                      });
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(bottom: 35),
-                                      width: _isSmallScreen
-                                          ? _windowWidth * 0.91
-                                          : MediaQuery.of(context).size.width *
-                                              0.77,
-                                      height: 100,
-                                      decoration: (BoxDecoration(
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(21),
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.grey.withOpacity(0.49),
-                                            spreadRadius: 0,
-                                            blurRadius: 7,
-                                            offset: Offset(3, 3),
-                                          )
-                                        ],
-                                      )),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 17),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            // IMAGE
-                                            Container(
-                                              height: 63,
-                                              width: 63,
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(7),
-                                                ),
-                                                child: Image.asset(
-                                                  workOrders[index].image,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                            // CONTENT MIDDLE
-                                            Container(
-                                              //color: Colors.blue,
-                                              width: 140,
-                                              padding:
-                                                  EdgeInsets.only(left: 14),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    workOrders[index].title,
-                                                    style: TextStyle(
-                                                        color: _darkBlue),
-                                                  ),
-                                                  Text(
-                                                    "\$" +
-                                                        workOrders[index].cost,
-                                                    style: TextStyle(
-                                                      color: _darkBlue
-                                                          .withOpacity(0.7),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            // CONTENT RIGHT
-                                            Container(
-                                              //color: Colors.red,
-                                              width: 93,
-                                              padding:
-                                                  EdgeInsets.only(left: 14),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    workOrders[index].status,
-                                                    style: TextStyle(
-                                                      color: workOrders[index]
-                                                                  .status ==
-                                                              "Aguardando Colecta"
-                                                          ? Color(0xFFFFAA00)
-                                                          : workOrders[index]
-                                                                      .status ==
-                                                                  "En Progreso"
-                                                              ? Color(
-                                                                  0xFF5BADFF)
-                                                              : Color(
-                                                                  0xFF6DD132),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'Ver detalles',
-                                                    style: TextStyle(
-                                                      color: _darkBlue
-                                                          .withOpacity(0.7),
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              itemCount: workOrders.length,
-                            ),
-                          ),
-                        ),
-                        // EXPANDED CARD
-                        AnimatedContainer(
-                          duration: Duration(milliseconds: 1000),
-                          curve: Curves.fastLinearToSlowEaseIn,
-                          transform:
-                              Matrix4.translationValues(_screen31XOffset, 0, 0),
-                          child: Center(
-                            child: Container(
-                              margin: _isSmallScreen
-                                  ? EdgeInsets.only(top: 25)
-                                  : EdgeInsets.only(top: 110, bottom: 21),
-                              width: _isSmallScreen
-                                  ? _windowWidth * 0.91
-                                  : MediaQuery.of(context).size.width * 0.77,
-                              height: _windowHeight >= 750
-                                  ? _windowHeight * 0.63
-                                  : null,
-                              decoration: (BoxDecoration(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(21),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.49),
-                                    spreadRadius: 0,
-                                    blurRadius: 7,
-                                    offset: Offset(3, 3),
-                                  )
-                                ],
-                              )),
-                              child: Padding(
-                                padding: const EdgeInsets.all(17),
-                                child: Column(
-                                  //mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    // ID AND STATUS
-                                    Container(
-                                      margin: EdgeInsets.only(bottom: 14),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          // ID
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 7),
-                                                child: Text(
-                                                  'Encargo #',
-                                                  style: TextStyle(
-                                                    color: _darkBlue
-                                                        .withOpacity(0.35),
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                workOrders[_selectedWorkOrder]
-                                                    .id,
-                                              ),
-                                            ],
-                                          ),
-                                          // STATUS
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 7),
-                                                child: Text(
-                                                  'Status',
-                                                  style: TextStyle(
-                                                    color: _darkBlue
-                                                        .withOpacity(0.35),
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                workOrders[_selectedWorkOrder]
-                                                    .status,
-                                                style: TextStyle(
-                                                  color: workOrders[
-                                                                  _selectedWorkOrder]
-                                                              .status ==
-                                                          "Aguardando Colecta"
-                                                      ? Color(0xFFFFAA00)
-                                                      : workOrders[_selectedWorkOrder]
-                                                                  .status ==
-                                                              "En Progreso"
-                                                          ? Color(0xFF5BADFF)
-                                                          : Color(0xFF6DD132),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // STATUS BAR
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        bottom: 21,
-                                      ),
-                                      child: Image.asset(
-                                        "assets/images/temp_progress_recolored2.png",
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    // IMAGE AND DESCRIPTION
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        bottom: 14,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // IMAGE
-                                          Container(
-                                            height: 100,
-                                            width: 100,
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(7),
-                                              ),
-                                              child: Image.asset(
-                                                workOrders[_selectedWorkOrder]
-                                                    .image,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          // TITLE AND DESCRIPTION
-                                          Expanded(
-                                            // color: Colors.red,
-                                            // width: 100,
-                                            child: Container(
-                                              margin: EdgeInsets.only(left: 14),
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    //color: Colors.black,
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 10),
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.bottomLeft,
-                                                      child: Text(
-                                                        workOrders[
-                                                                _selectedWorkOrder]
-                                                            .title,
-                                                        style: TextStyle(
-                                                            color: _darkBlue,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    workOrders[
-                                                            _selectedWorkOrder]
-                                                        .description,
-                                                    style: TextStyle(
-                                                        color: _darkBlue,
-                                                        fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // WORKER
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        bottom: 14,
-                                      ),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            //print('Clicked worker link');
-                                          });
-                                        },
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                bottom: 4,
-                                              ),
-                                              child: Text(
-                                                'Reparación por',
-                                                style: TextStyle(
-                                                  color: _darkBlue,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  workOrders[_selectedWorkOrder]
-                                                      .workerId,
-                                                  style: TextStyle(
-                                                    color: _darkBlue,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin:
-                                                      EdgeInsets.only(left: 7),
-                                                  child: Icon(
-                                                    Icons.open_in_new_rounded,
-                                                    size: 14,
-                                                    color: _coral,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // DATES
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        bottom: 14,
-                                      ),
-                                      width: _windowWidth * 0.47,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 7),
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Inicio del Encargo',
-                                                      style: TextStyle(
-                                                        color: _darkBlue
-                                                            .withOpacity(0.70),
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      workOrders[
-                                                              _selectedWorkOrder]
-                                                          .start,
-                                                      style: TextStyle(
-                                                        color: _darkBlue,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Fin del Encargo',
-                                                    style: TextStyle(
-                                                      color: _darkBlue
-                                                          .withOpacity(0.70),
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    workOrders[_selectedWorkOrder]
-                                                                .end !=
-                                                            'En Progreso'
-                                                        ? workOrders[
-                                                                _selectedWorkOrder]
-                                                            .end
-                                                        : 'En Progreso',
-                                                    style: TextStyle(
-                                                      color:
-                                                          workOrders[_selectedWorkOrder]
-                                                                      .end ==
-                                                                  'En Progreso'
-                                                              ? _darkBlue
-                                                                  .withOpacity(
-                                                                      0.35)
-                                                              : _darkBlue,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // DETAILS AND COST
-                                    Container(
-                                      width: _windowWidth * 0.58,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Duración Estimada',
-                                                  style: TextStyle(
-                                                    color: _darkBlue
-                                                        .withOpacity(0.70),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  workOrders[_selectedWorkOrder]
-                                                      .estimate,
-                                                  style: TextStyle(
-                                                    color: _darkBlue,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Garantía',
-                                                  style: TextStyle(
-                                                    color: _darkBlue
-                                                        .withOpacity(0.70),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  workOrders[_selectedWorkOrder]
-                                                      .warranty,
-                                                  style: TextStyle(
-                                                    color: _darkBlue,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Método de pago',
-                                                  style: TextStyle(
-                                                    color: _darkBlue
-                                                        .withOpacity(0.70),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  workOrders[_selectedWorkOrder]
-                                                      .paymentMethod,
-                                                  style: TextStyle(
-                                                    color: _darkBlue,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Confianza del reparador',
-                                                style: TextStyle(
-                                                  color: _darkBlue
-                                                      .withOpacity(0.70),
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        right: 4),
-                                                    child: Text(
-                                                      workOrders[
-                                                              _selectedWorkOrder]
-                                                          .workerConfidence,
-                                                      style: TextStyle(
-                                                        color: _darkBlue,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Icon(
-                                                    workOrders[_selectedWorkOrder]
-                                                                .workerConfidence ==
-                                                            "Alta"
-                                                        ? Icons
-                                                            .signal_cellular_4_bar_rounded
-                                                        : workOrders[_selectedWorkOrder]
-                                                                    .workerConfidence ==
-                                                                "Media"
-                                                            ? Icons
-                                                                .signal_cellular_off_rounded
-                                                            : Icons
-                                                                .signal_cellular_null_rounded,
-                                                    size: 14,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          Divider(
-                                            thickness: 0.7,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Costo',
-                                                style: TextStyle(
-                                                  color: _darkBlue
-                                                      .withOpacity(0.70),
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Text(
-                                                "\$" +
-                                                    workOrders[
-                                                            _selectedWorkOrder]
-                                                        .cost,
-                                                style: TextStyle(
-                                                  color: _darkBlue,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(),
-                                    ),
-                                    // ESCONDER DETALLES
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _currentScreen = 30;
-                                        });
-                                      },
-                                      child: Text(
-                                        'Esconder detalles',
-                                        style: TextStyle(
-                                          color: _darkBlue.withOpacity(0.7),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    //Encargos(context),
+                    EnDesarrolloPlaceholder(coral: _coral, windowWidth: _windowWidth, windowHeight: _windowHeight, isSmallScreen: _isSmallScreen),
                     // PERFIL
-                    Column(
-                      //mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // HEADER
-                        Container(
-                          child: Column(
-                            children: [
-                              // TITLE
-                              Container(
-                                width: double.infinity,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                    color: _coral,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(100),
-                                    )),
-                                child: SafeArea(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 77),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'TU PERFIL',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // RIGHT BOTTOM CURVE
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 1800),
-                                curve: Curves.fastLinearToSlowEaseIn,
-                                transform: Matrix4.translationValues(0, 0, 0),
-                                child: Align(
-                                  alignment: Alignment.topRight,
-                                  child: Container(
-                                    width: 56,
-                                    height: 56,
-                                    decoration: BoxDecoration(
-                                        color: _coral,
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(100))),
-                                    child: Container(
-                                      width: 56,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                        borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(100),
-                                          bottomLeft: Radius.circular(90),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        // CONTENT
-                        Container(
-                          width: _windowWidth,
-                          height: MediaQuery.of(context).size.height * 0.63,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.handyman_rounded,
-                                size: 140,
-                                color: _coral,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  print(_windowWidth);
-                                  print(_windowHeight);
-                                  print(_isSmallScreen);
-                                },
-                                child: Text(
-                                  'En Desarrollo',
-                                  style: TextStyle(
-                                      color: _coral,
-                                      fontSize: 21,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    EnDesarrolloPlaceholder(coral: _coral, windowWidth: _windowWidth, windowHeight: _windowHeight, isSmallScreen: _isSmallScreen),
                   ],
                 ),
               ),
@@ -2424,7 +1635,9 @@ class _AllHomepageState extends State<AllHomepage> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(100),
                       ),
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: Theme
+                          .of(context)
+                          .scaffoldBackgroundColor,
                     ),
                     child: Container(
                       padding: EdgeInsets.only(left: 10),
@@ -2444,7 +1657,9 @@ class _AllHomepageState extends State<AllHomepage> {
             width: double.infinity,
             height: 70,
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: Theme
+                  .of(context)
+                  .scaffoldBackgroundColor,
               border: Border(
                 top: BorderSide(
                   color: _darkBlue.withOpacity(0.21),
@@ -2599,5 +1814,17 @@ class _AllHomepageState extends State<AllHomepage> {
         ],
       ),
     );
+  }
+}
+
+class Mensajes extends StatefulWidget {
+  @override
+  _MensajesState createState() => _MensajesState();
+}
+
+class _MensajesState extends State<Mensajes> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
