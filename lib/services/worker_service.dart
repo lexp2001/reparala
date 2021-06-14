@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:repara_latam/models/workers_model.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:repara_latam/models/workers_model.dart';
 
 // Get workers list
 Future<WorkersList> getWorkers() async {
-  final response = await http.get('https://api-reparala.herokuapp.com/workers');
+  final response = await http.get(Uri.parse('https://api-reparala.herokuapp.com/workers'));
   if (response.statusCode == 200) {
     final jsonResponse = json.decode(response.body);
     var workersList = WorkersList.fromJson(jsonResponse['results']);
@@ -30,7 +30,6 @@ Future<WorkersList> getWorkers() async {
     //     position: element.locationCoords,
     //   ));
     // });
-
 
     return workersList;
   } else {

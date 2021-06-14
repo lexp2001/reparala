@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,23 +12,42 @@ import 'package:provider/provider.dart';
 import 'package:repara_latam/blocs/application_bloc.dart';
 import 'package:repara_latam/main.dart';
 import 'package:repara_latam/models/messages.dart';
-import 'package:repara_latam/models/work_order_model.dart';
 import 'package:repara_latam/models/workers_model.dart';
-import 'package:repara_latam/screens/encargos.dart';
+import 'package:repara_latam/screens/take_picture.dart';
 import 'package:repara_latam/services/worker_service.dart';
 
 import 'desarrollo_placeholder.dart';
+import 'encargos.dart';
+
+CameraDescription selectedCamera;
 
 class AppBody extends StatelessWidget {
+  final CameraDescription camera;
+
+  const AppBody({
+    Key key,
+    @required this.camera,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    selectedCamera = camera;
     return ChangeNotifierProvider(
         create: (context) => ApplicationBloc(),
-        child: Scaffold(resizeToAvoidBottomInset: false, body: AllHomepage()));
+        child: Scaffold(resizeToAvoidBottomInset: false, body: AllHomepage(camera: camera)));
   }
 }
 
 class AllHomepage extends StatefulWidget {
+  final CameraDescription camera;
+  final String imagePath;
+
+  const AllHomepage({
+    Key key,
+    @required this.camera,
+    @required this.imagePath
+  }) : super(key: key);
+
   @override
   _AllHomepageState createState() => _AllHomepageState();
 }
@@ -132,14 +152,12 @@ class _AllHomepageState extends State<AllHomepage> {
   }
 
   void _setMapStyle() async {
-    String style = await DefaultAssetBundle.of(context)
-        .loadString('assets/map_style.json');
+    String style = await DefaultAssetBundle.of(context).loadString('assets/map_style.json');
     _mapController.setMapStyle(style);
   }
 
   void _setMarkerIcon() async {
-    _markerIcon = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration.empty, 'assets/images/star_small.png');
+    _markerIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, 'assets/images/star_small.png');
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -149,8 +167,7 @@ class _AllHomepageState extends State<AllHomepage> {
       _markers.add(Marker(
         markerId: MarkerId('0'),
         position: LatLng(-33.445995, -70.667057),
-        infoWindow:
-        InfoWindow(title: 'Punto 1', snippet: 'Descripción Punto 1'),
+        infoWindow: InfoWindow(title: 'Punto 1', snippet: 'Descripción Punto 1'),
         icon: _markerIcon,
       ));
 
@@ -209,6 +226,12 @@ class _AllHomepageState extends State<AllHomepage> {
   int _selectedOption = 1;
   int _currentScreen = 10;
 
+  _updateCurrentScreen(newNumber) {
+    setState(() {
+      _currentScreen = newNumber;
+    });
+  }
+
   bool _isUserQueryValidated = true;
 
   int _selectedWorkOrder = 0;
@@ -218,14 +241,8 @@ class _AllHomepageState extends State<AllHomepage> {
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
 
-    _windowHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    _windowWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    _windowHeight = MediaQuery.of(context).size.height;
+    _windowWidth = MediaQuery.of(context).size.width;
 
     if (_windowWidth <= 400) {
       _isSmallScreen = true;
@@ -296,16 +313,15 @@ class _AllHomepageState extends State<AllHomepage> {
     _signOut() {
       _selectedOption = null;
       _currentScreen = null;
-      auth.signOut().then((value) =>
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) => MyApp())));
+      auth
+          .signOut()
+          .then((value) => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MyApp())));
     }
 
     Future<bool> _confirmSignOut() {
       return showDialog(
           context: context,
-          builder: (context) =>
-              AlertDialog(
+          builder: (context) => AlertDialog(
                 title: Center(child: Text('Salir')),
                 content: Text(
                   '¿Deseas salir de la aplicación o salir de tu cuenta?',
@@ -315,8 +331,7 @@ class _AllHomepageState extends State<AllHomepage> {
                   Center(
                     child: TextButton(
                         onPressed: () {
-                          SystemChannels.platform
-                              .invokeMethod('SystemNavigator.pop');
+                          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                         },
                         child: Text('Salir de la aplicación')),
                   ),
@@ -328,10 +343,7 @@ class _AllHomepageState extends State<AllHomepage> {
                         },
                         child: Text('Salir de mi cuenta')),
                   ),
-                  Center(
-                      child: TextButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: Text('Cancelar')))
+                  Center(child: TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancelar')))
                 ],
               ));
     }
@@ -339,8 +351,8 @@ class _AllHomepageState extends State<AllHomepage> {
     Future<bool> onWillPopOptions() {
       switch (_currentScreen) {
         case 10:
-        // _selectedOption = null;
-        // _currentScreen = null;
+          // _selectedOption = null;
+          // _currentScreen = null;
           _confirmSignOut();
           //signOut();
           break;
@@ -411,12 +423,8 @@ class _AllHomepageState extends State<AllHomepage> {
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow.withOpacity(0.21),
                           width: _windowWidth,
-                          height: MediaQuery
-                              .of(context)
-                              .size
-                              .height,
-                          transform:
-                          Matrix4.translationValues(_screen12XOffset, 0, 0),
+                          height: MediaQuery.of(context).size.height,
+                          transform: Matrix4.translationValues(_screen12XOffset, 0, 0),
                           child: Stack(
                             children: [
                               // MAP PLACEHOLDER
@@ -427,30 +435,27 @@ class _AllHomepageState extends State<AllHomepage> {
                                 //   fit: BoxFit.cover,
                                 // ),
 
-                                child:
-                                (applicationBloc.currentLocation == null ||
-                                    allMarkersRenderd.length == 0)
+                                child: (applicationBloc.currentLocation == null || allMarkersRenderd.length == 0)
                                     ? Center(
-                                  child: CircularProgressIndicator(),
-                                )
+                                        child: CircularProgressIndicator(),
+                                      )
                                     : GoogleMap(
-                                  onMapCreated: _onMapCreated,
-                                  mapType: MapType.normal,
-                                  myLocationEnabled: true,
-                                  initialCameraPosition: CameraPosition(
-                                      target: LatLng(-33.445995, -70.667057
+                                        onMapCreated: _onMapCreated,
+                                        mapType: MapType.normal,
+                                        myLocationEnabled: true,
+                                        initialCameraPosition: CameraPosition(
+                                            target: LatLng(-33.445995, -70.667057
 
-                                        // SETS USER LOCATION
-                                        // applicationBloc
-                                        //     .currentLocation.latitude,
-                                        // applicationBloc
-                                        //     .currentLocation.longitude
+                                                // SETS USER LOCATION
+                                                // applicationBloc
+                                                //     .currentLocation.latitude,
+                                                // applicationBloc
+                                                //     .currentLocation.longitude
 
+                                                ),
+                                            zoom: 13),
+                                        markers: Set.from(allMarkersRenderd),
                                       ),
-                                      zoom: 13),
-                                  markers:
-                                  Set.from(allMarkersRenderd),
-                                ),
                               ),
                             ],
                           ),
@@ -480,9 +485,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                         Center(
                                           child: Text(
                                             ' Santiago 1320, Región Metropolitana',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ],
@@ -494,8 +497,7 @@ class _AllHomepageState extends State<AllHomepage> {
                               AnimatedContainer(
                                 duration: Duration(milliseconds: 1800),
                                 curve: Curves.fastLinearToSlowEaseIn,
-                                transform: Matrix4.translationValues(
-                                    _headerRightBottomCurveXOffset, 0, 0),
+                                transform: Matrix4.translationValues(_headerRightBottomCurveXOffset, 0, 0),
                                 child: Align(
                                   alignment: Alignment.topRight,
                                   child: Container(
@@ -503,15 +505,12 @@ class _AllHomepageState extends State<AllHomepage> {
                                     height: 56,
                                     decoration: BoxDecoration(
                                         color: _coral,
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(100))),
+                                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100))),
                                     child: Container(
                                       width: 56,
                                       height: 56,
                                       decoration: BoxDecoration(
-                                        color: Theme
-                                            .of(context)
-                                            .scaffoldBackgroundColor,
+                                        color: Theme.of(context).scaffoldBackgroundColor,
                                         borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(100),
                                           bottomLeft: Radius.circular(90),
@@ -529,12 +528,8 @@ class _AllHomepageState extends State<AllHomepage> {
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow,
-                          height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * 0.75,
-                          transform: Matrix4.translationValues(
-                              _screen10XOffset, 100, 0),
+                          height: MediaQuery.of(context).size.height * 0.75,
+                          transform: Matrix4.translationValues(_screen10XOffset, 100, 0),
                           child: Padding(
                             padding: const EdgeInsets.only(left: 49),
                             child: Column(
@@ -550,10 +545,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       width: 210,
                                       child: Text(
                                         '¿Qué deseas reparar?',
-                                        style: TextStyle(
-                                            color: _darkBlue,
-                                            fontSize: 35,
-                                            fontWeight: FontWeight.w500),
+                                        style: TextStyle(color: _darkBlue, fontSize: 35, fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                     // INPUT
@@ -588,8 +580,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       setState(() {
                                         _currentScreen = 11;
                                       });
-                                      FocusManager.instance.primaryFocus
-                                          .unfocus();
+                                      FocusManager.instance.primaryFocus.unfocus();
                                     },
                                     child: Container(
                                       margin: EdgeInsets.only(
@@ -599,15 +590,10 @@ class _AllHomepageState extends State<AllHomepage> {
                                       width: 63,
                                       height: 63,
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(100),
-                                          color: _isUserQueryValidated
-                                              ? _coral
-                                              : _darkBlue.withOpacity(0.07)),
+                                          borderRadius: BorderRadius.circular(100),
+                                          color: _isUserQueryValidated ? _coral : _darkBlue.withOpacity(0.07)),
                                       child: Icon(Icons.chevron_right,
-                                          color: _isUserQueryValidated
-                                              ? Colors.white
-                                              : _colorInactiveOption),
+                                          color: _isUserQueryValidated ? Colors.white : _colorInactiveOption),
                                     ),
                                   ),
                                 ),
@@ -621,11 +607,8 @@ class _AllHomepageState extends State<AllHomepage> {
                           curve: Curves.fastLinearToSlowEaseIn,
                           //color: Colors.yellow.withOpacity(0.21),
                           width: _windowWidth,
-                          height: _isSmallScreen
-                              ? _windowHeight * 0.75
-                              : _windowHeight * 0.80,
-                          transform: Matrix4.translationValues(
-                              _screen11XOffset, 75, 0),
+                          height: _isSmallScreen ? _windowHeight * 0.75 : _windowHeight * 0.80,
+                          transform: Matrix4.translationValues(_screen11XOffset, 75, 0),
                           child: Stack(
                             children: [
                               Padding(
@@ -641,16 +624,20 @@ class _AllHomepageState extends State<AllHomepage> {
                                       width: 200,
                                       child: Text(
                                         'Toma una foto de tu artículo',
-                                        style: TextStyle(
-                                            color: _darkBlue,
-                                            fontSize: 35,
-                                            fontWeight: FontWeight.w500),
+                                        style: TextStyle(color: _darkBlue, fontSize: 35, fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                     // TAKE PICTURE
                                     GestureDetector(
                                       onTap: () {
-                                        _openCamera(context);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => TakePictureScreen(
+                                                    camera: selectedCamera,
+                                                  )),
+                                        );
+                                        //_openCamera(context);
                                         //print('Take picture clicked');
                                       },
                                       child: Stack(
@@ -658,48 +645,29 @@ class _AllHomepageState extends State<AllHomepage> {
                                           Container(
                                               margin: EdgeInsets.only(top: 21),
                                               padding: EdgeInsets.all(21),
-                                              width: MediaQuery
-                                                  .of(context)
-                                                  .size
-                                                  .width *
-                                                  0.75,
-                                              height: MediaQuery
-                                                  .of(context)
-                                                  .size
-                                                  .width *
-                                                  0.75,
+                                              width: MediaQuery.of(context).size.width * 0.75,
+                                              height: MediaQuery.of(context).size.width * 0.75,
                                               decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: _coral, width: 2),
+                                                border: Border.all(color: _coral, width: 2),
                                               ),
-                                              child: _filePictureFromCamera ==
-                                                  null
-                                                  ? Image.asset(
-                                                  "assets/images/boots_square_compressed.png")
-                                                  : Image.file(File(
-                                                  _filePictureFromCamera
-                                                      .path))),
+                                              child: imagePath == null
+                                                  ? Image.asset("assets/images/boots_square_compressed.png")
+                                                  : Image.file(File(imagePath))),
+                                              // child: _filePictureFromCamera == null
+                                              //     ? Image.asset("assets/images/boots_square_compressed.png")
+                                              //     : Image.file(File(_filePictureFromCamera.path))),
                                           Align(
                                             alignment: Alignment.bottomCenter,
                                             child: Container(
-                                              margin: EdgeInsets.only(
-                                                  top: MediaQuery
-                                                      .of(context)
-                                                      .size
-                                                      .width *
-                                                      0.75),
+                                              margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.75),
                                               width: 50,
                                               height: 50,
                                               decoration: BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius.all(
+                                                  borderRadius: BorderRadius.all(
                                                     Radius.circular(100),
                                                   ),
-                                                  border: Border.all(
-                                                      color: _coral, width: 2),
-                                                  color: Theme
-                                                      .of(context)
-                                                      .scaffoldBackgroundColor),
+                                                  border: Border.all(color: _coral, width: 2),
+                                                  color: Theme.of(context).scaffoldBackgroundColor),
                                               child: Icon(
                                                 Icons.camera_alt_outlined,
                                                 color: _coral,
@@ -711,26 +679,21 @@ class _AllHomepageState extends State<AllHomepage> {
                                     ),
                                     // SEPARATOR
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 21),
+                                      padding: const EdgeInsets.symmetric(vertical: 21),
                                       child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '--------------',
-                                            style: TextStyle(
-                                                color: _colorInactiveOption),
+                                            style: TextStyle(color: _colorInactiveOption),
                                           ),
                                           Text(
                                             '       O       ',
-                                            style: TextStyle(
-                                                color: _colorInactiveOption),
+                                            style: TextStyle(color: _colorInactiveOption),
                                           ),
                                           Text(
                                             '--------------',
-                                            style: TextStyle(
-                                                color: _colorInactiveOption),
+                                            style: TextStyle(color: _colorInactiveOption),
                                           ),
                                         ],
                                       ),
@@ -742,29 +705,25 @@ class _AllHomepageState extends State<AllHomepage> {
                                       child: Column(
                                         children: [
                                           Container(
-                                              child: _pathImageFromGallery ==
-                                                  null
+                                              child: _pathImageFromGallery == null
                                                   ? Icon(
-                                                Icons.image_outlined,
-                                                color: _coral,
-                                                size: 72,
-                                              )
-                                                  : Image.file(File(
-                                                  _pathImageFromGallery))),
+                                                      Icons.image_outlined,
+                                                      color: _coral,
+                                                      size: 72,
+                                                    )
+                                                  : Image.file(File(_pathImageFromGallery))),
                                           Container(
                                             margin: EdgeInsets.only(top: 7),
                                             child: Text(
                                               'Selecciona una imagen de la galería',
-                                              style:
-                                              TextStyle(color: _darkBlue),
+                                              style: TextStyle(color: _darkBlue),
                                             ),
                                           ),
                                           Container(
                                             margin: EdgeInsets.only(top: 7),
                                             child: Text(
                                               'foto_botas.jpg',
-                                              style: TextStyle(
-                                                  color: _colorInactiveOption),
+                                              style: TextStyle(color: _colorInactiveOption),
                                             ),
                                           ),
                                         ],
@@ -772,8 +731,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                     ),
                                     // CONTINUE
                                     Container(
-                                      margin:
-                                      EdgeInsets.only(top: 70, bottom: 28),
+                                      margin: EdgeInsets.only(top: 70, bottom: 28),
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -783,8 +741,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                         child: Center(
                                           child: Text(
                                             'Saltar este paso',
-                                            style: TextStyle(
-                                                color: _colorInactiveOption),
+                                            style: TextStyle(color: _colorInactiveOption),
                                           ),
                                         ),
                                       ),
@@ -804,20 +761,14 @@ class _AllHomepageState extends State<AllHomepage> {
                                       });
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 7, horizontal: 21),
+                                      margin: EdgeInsets.symmetric(vertical: 7, horizontal: 21),
                                       width: 63,
                                       height: 63,
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(100),
-                                          color: _isUserQueryValidated
-                                              ? _coral
-                                              : _darkBlue.withOpacity(0.07)),
+                                          borderRadius: BorderRadius.circular(100),
+                                          color: _isUserQueryValidated ? _coral : _darkBlue.withOpacity(0.07)),
                                       child: Icon(Icons.chevron_right,
-                                          color: _isUserQueryValidated
-                                              ? Colors.white
-                                              : _colorInactiveOption),
+                                          color: _isUserQueryValidated ? Colors.white : _colorInactiveOption),
                                     ),
                                   ),
                                 ),
@@ -830,13 +781,10 @@ class _AllHomepageState extends State<AllHomepage> {
                         AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
-                          color: Theme
-                              .of(context)
-                              .scaffoldBackgroundColor,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           //width: _windowWidth,
                           height: _windowHeight,
-                          transform:
-                          Matrix4.translationValues(_screen50XOffset, 0, 0),
+                          transform: Matrix4.translationValues(_screen50XOffset, 0, 0),
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
@@ -846,8 +794,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   // PICTURE
                                   Container(
                                     height: 210,
-                                    transform:
-                                    Matrix4.translationValues(0, -35, 0),
+                                    transform: Matrix4.translationValues(0, -35, 0),
                                     child: Image.asset(
                                       _selectedWorker.coverImage,
                                       fit: BoxFit.cover,
@@ -858,13 +805,8 @@ class _AllHomepageState extends State<AllHomepage> {
                                     //margin: EdgeInsets.only(top: 21),
                                     child: Center(
                                       child: Text(
-                                        _selectedWorker.name +
-                                            " - " +
-                                            _selectedWorker.category,
-                                        style: TextStyle(
-                                            color: _darkBlue,
-                                            fontSize: 21,
-                                            fontWeight: FontWeight.bold),
+                                        _selectedWorker.name + " - " + _selectedWorker.category,
+                                        style: TextStyle(color: _darkBlue, fontSize: 21, fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ),
@@ -892,8 +834,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                     child: Container(
                                       margin: EdgeInsets.only(top: 7),
                                       child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Icon(
                                             Icons.star_rate_rounded,
@@ -991,14 +932,11 @@ class _AllHomepageState extends State<AllHomepage> {
                           //color: Colors.yellow.withOpacity(0.21),
                           //width: _windowWidth,
                           //height: MediaQuery.of(context).size.height * 0.77,
-                          transform:
-                          Matrix4.translationValues(_screen52XOffset, 0, 0),
+                          transform: Matrix4.translationValues(_screen52XOffset, 0, 0),
                           child: Container(
                             width: _windowWidth,
                             height: _windowHeight - 70,
-                            color: Theme
-                                .of(context)
-                                .scaffoldBackgroundColor,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -1037,14 +975,11 @@ class _AllHomepageState extends State<AllHomepage> {
                                   padding: const EdgeInsets.only(left: 77),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'MENSAJES',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -1062,16 +997,12 @@ class _AllHomepageState extends State<AllHomepage> {
                                   width: 56,
                                   height: 56,
                                   decoration: BoxDecoration(
-                                      color: _coral,
-                                      borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(100))),
+                                      color: _coral, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100))),
                                   child: Container(
                                     width: 56,
                                     height: 56,
                                     decoration: BoxDecoration(
-                                      color: Theme
-                                          .of(context)
-                                          .scaffoldBackgroundColor,
+                                      color: Theme.of(context).scaffoldBackgroundColor,
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(100),
                                         bottomLeft: Radius.circular(90),
@@ -1087,8 +1018,7 @@ class _AllHomepageState extends State<AllHomepage> {
                         AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
-                          transform:
-                          Matrix4.translationValues(_screen20XOffset, 0, 0),
+                          transform: Matrix4.translationValues(_screen20XOffset, 0, 0),
                           child: Container(
                             margin: EdgeInsets.only(top: 100),
                             width: _windowWidth,
@@ -1102,9 +1032,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   margin: EdgeInsets.only(bottom: 21),
                                   //padding: EdgeInsets.all(21),
                                   height: 49,
-                                  width: _isSmallScreen
-                                      ? _windowWidth * 0.91
-                                      : _windowWidth * 0.77,
+                                  width: _isSmallScreen ? _windowWidth * 0.91 : _windowWidth * 0.77,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(100),
                                     boxShadow: [
@@ -1135,8 +1063,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                               border: InputBorder.none,
                                               hintText: 'Buscar...',
                                               hintStyle: TextStyle(
-                                                color:
-                                                _darkBlue.withOpacity(0.49),
+                                                color: _darkBlue.withOpacity(0.49),
                                               ),
                                             ),
                                           ),
@@ -1159,9 +1086,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                         child: Align(
                                           child: Container(
                                             margin: EdgeInsets.only(bottom: 35),
-                                            width: _isSmallScreen
-                                                ? _windowWidth * 0.91
-                                                : _windowWidth * 0.77,
+                                            width: _isSmallScreen ? _windowWidth * 0.91 : _windowWidth * 0.77,
                                             height: 70,
                                             //color: Colors.red,
                                             child: Row(
@@ -1169,18 +1094,15 @@ class _AllHomepageState extends State<AllHomepage> {
                                               children: [
                                                 // PROFILE PICTURE
                                                 Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 14),
+                                                  margin: EdgeInsets.only(right: 14),
                                                   height: 70,
                                                   width: 70,
                                                   child: ClipRRect(
-                                                    borderRadius:
-                                                    BorderRadius.all(
+                                                    borderRadius: BorderRadius.all(
                                                       Radius.circular(100),
                                                     ),
                                                     child: Image.asset(
-                                                      messages[index]
-                                                          .workerPicture,
+                                                      messages[index].workerPicture,
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
@@ -1191,50 +1113,29 @@ class _AllHomepageState extends State<AllHomepage> {
                                                     children: [
                                                       // NAME AND TIME
                                                       Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 10),
+                                                        margin: EdgeInsets.only(bottom: 10),
                                                         child: Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             Text(
-                                                              messages[index]
-                                                                  .workerId,
+                                                              messages[index].workerId,
                                                               style: TextStyle(
-                                                                fontWeight: messages[index]
-                                                                    .amountUnread !=
-                                                                    '0'
-                                                                    ? FontWeight
-                                                                    .bold
-                                                                    : FontWeight
-                                                                    .w500,
-                                                                color: messages[index]
-                                                                    .amountUnread !=
-                                                                    '0'
-                                                                    ? _darkBlue
-                                                                    .withOpacity(
-                                                                    0.84)
-                                                                    : _darkBlue
-                                                                    .withOpacity(
-                                                                    0.77),
+                                                                fontWeight: messages[index].amountUnread != '0'
+                                                                    ? FontWeight.bold
+                                                                    : FontWeight.w500,
+                                                                color: messages[index].amountUnread != '0'
+                                                                    ? _darkBlue.withOpacity(0.84)
+                                                                    : _darkBlue.withOpacity(0.77),
                                                               ),
                                                             ),
                                                             Text(
-                                                              messages[index]
-                                                                  .timeSent,
+                                                              messages[index].timeSent,
                                                               style: TextStyle(
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold,
+                                                                fontWeight: FontWeight.bold,
                                                                 fontSize: 12,
-                                                                color: messages[index]
-                                                                    .amountUnread !=
-                                                                    '0'
+                                                                color: messages[index].amountUnread != '0'
                                                                     ? _coral
-                                                                    : _darkBlue
-                                                                    .withOpacity(
-                                                                    0.35),
+                                                                    : _darkBlue.withOpacity(0.35),
                                                               ),
                                                             ),
                                                           ],
@@ -1242,59 +1143,37 @@ class _AllHomepageState extends State<AllHomepage> {
                                                       ),
                                                       // MESSAGE AND NOTIFICATION
                                                       Row(
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
                                                           // MESSAGE
                                                           Expanded(
                                                             child: Text(
-                                                              messages[index]
-                                                                  .message,
+                                                              messages[index].message,
                                                               maxLines: 2,
-                                                              style: TextStyle(
-                                                                  height: 1.4),
-                                                              overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
+                                                              style: TextStyle(height: 1.4),
+                                                              overflow: TextOverflow.ellipsis,
                                                             ),
                                                           ),
                                                           // NOTIFICATION
                                                           Visibility(
-                                                            visible: messages[
-                                                            index]
-                                                                .amountUnread !=
-                                                                '0',
+                                                            visible: messages[index].amountUnread != '0',
                                                             child: Container(
-                                                              margin: EdgeInsets
-                                                                  .only(
-                                                                  left: 14),
+                                                              margin: EdgeInsets.only(left: 14),
                                                               width: 21,
                                                               height: 21,
-                                                              decoration:
-                                                              BoxDecoration(
+                                                              decoration: BoxDecoration(
                                                                 color: _coral,
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                      21),
+                                                                borderRadius: BorderRadius.all(
+                                                                  Radius.circular(21),
                                                                 ),
                                                               ),
                                                               child: Center(
                                                                 child: Text(
-                                                                  messages[
-                                                                  index]
-                                                                      .amountUnread,
+                                                                  messages[index].amountUnread,
                                                                   style: TextStyle(
-                                                                      fontSize:
-                                                                      12,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                      color: Colors
-                                                                          .white),
+                                                                      fontSize: 12,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: Colors.white),
                                                                 ),
                                                               ),
                                                             ),
@@ -1321,8 +1200,7 @@ class _AllHomepageState extends State<AllHomepage> {
                         AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
                           curve: Curves.fastLinearToSlowEaseIn,
-                          transform:
-                          Matrix4.translationValues(0, _screen21YOffset, 0),
+                          transform: Matrix4.translationValues(0, _screen21YOffset, 0),
                           child: Container(
                             width: _windowWidth,
                             height: _windowHeight - 70,
@@ -1342,9 +1220,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                       alignment: Alignment.center,
                                       child: Container(
                                         margin: EdgeInsets.only(top: 25),
-                                        width: _isSmallScreen
-                                            ? _windowWidth * 0.91
-                                            : _windowWidth * 0.77,
+                                        width: _isSmallScreen ? _windowWidth * 0.91 : _windowWidth * 0.77,
                                         height: 70,
                                         //color: Colors.red,
                                         child: Row(
@@ -1352,8 +1228,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                           children: [
                                             // PROFILE PICTURE
                                             Container(
-                                              margin:
-                                              EdgeInsets.only(right: 21),
+                                              margin: EdgeInsets.only(right: 21),
                                               height: 70,
                                               width: 70,
                                               child: ClipRRect(
@@ -1361,23 +1236,19 @@ class _AllHomepageState extends State<AllHomepage> {
                                                   Radius.circular(100),
                                                 ),
                                                 child: Image.asset(
-                                                  messages[_selectedMessage]
-                                                      .workerPicture,
+                                                  messages[_selectedMessage].workerPicture,
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
                                             ),
                                             // NAME AND CATEGORY
                                             Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 // NAME
                                                 Text(
-                                                  messages[_selectedMessage]
-                                                      .workerId,
+                                                  messages[_selectedMessage].workerId,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w500,
                                                     color: Colors.white,
@@ -1385,18 +1256,15 @@ class _AllHomepageState extends State<AllHomepage> {
                                                 ),
                                                 // CATEGORY
                                                 Text(
-                                                  messages[_selectedMessage]
-                                                      .workerCategories,
+                                                  messages[_selectedMessage].workerCategories,
                                                   maxLines: 2,
                                                   style: TextStyle(
                                                     height: 1.4,
-                                                    color: Colors.white
-                                                        .withOpacity(0.70),
+                                                    color: Colors.white.withOpacity(0.70),
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w300,
                                                   ),
-                                                  overflow:
-                                                  TextOverflow.ellipsis,
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),
@@ -1411,9 +1279,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                   width: _windowWidth,
                                   height: _windowHeight * 0.7,
                                   decoration: BoxDecoration(
-                                    color: Theme
-                                        .of(context)
-                                        .scaffoldBackgroundColor,
+                                    color: Theme.of(context).scaffoldBackgroundColor,
                                     borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(35),
                                       topRight: Radius.circular(35),
@@ -1431,8 +1297,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                           style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
-                                              color:
-                                              _darkBlue.withOpacity(0.35)),
+                                              color: _darkBlue.withOpacity(0.35)),
                                         ),
                                       ),
                                       // CHAT PLACEHOLDER
@@ -1445,38 +1310,26 @@ class _AllHomepageState extends State<AllHomepage> {
                                                   visible: _isMessageWithWorker,
                                                   child: Container(
                                                     //color: Colors.red,
-                                                    height: _isSmallScreen
-                                                        ? _windowHeight * 0.28
-                                                        : _windowHeight * 0.35,
+                                                    height:
+                                                        _isSmallScreen ? _windowHeight * 0.28 : _windowHeight * 0.35,
                                                     width: _windowWidth * 0.9,
-                                                    child: _filePictureFromCamera !=
-                                                        null
+                                                    child: _filePictureFromCamera != null
                                                         ? Align(
-                                                      alignment: Alignment
-                                                          .centerRight,
-                                                      child: Image.file(File(
-                                                          _filePictureFromCamera
-                                                              .path)),
-                                                    )
-                                                        : _pathImageFromGallery !=
-                                                        null
-                                                        ? Align(
-                                                      alignment: Alignment
-                                                          .centerRight,
-                                                      child: Image
-                                                          .file(File(
-                                                          _pathImageFromGallery)),
-                                                    )
-                                                        : Align(
-                                                      alignment: Alignment
-                                                          .centerRight,
-                                                      child:
-                                                      Image.asset(
-                                                        'assets/images/temp_chat.png',
-                                                        fit: BoxFit
-                                                            .fitWidth,
-                                                      ),
-                                                    ),
+                                                            alignment: Alignment.centerRight,
+                                                            child: Image.file(File(_filePictureFromCamera.path)),
+                                                          )
+                                                        : _pathImageFromGallery != null
+                                                            ? Align(
+                                                                alignment: Alignment.centerRight,
+                                                                child: Image.file(File(_pathImageFromGallery)),
+                                                              )
+                                                            : Align(
+                                                                alignment: Alignment.centerRight,
+                                                                child: Image.asset(
+                                                                  'assets/images/temp_chat.png',
+                                                                  fit: BoxFit.fitWidth,
+                                                                ),
+                                                              ),
                                                   )),
                                               Visibility(
                                                 visible: !_isMessageWithWorker,
@@ -1488,38 +1341,25 @@ class _AllHomepageState extends State<AllHomepage> {
                                               ),
                                               // USER REPAIR QUERY MESSAGE
                                               Align(
-                                                alignment:
-                                                Alignment.centerRight,
+                                                alignment: Alignment.centerRight,
                                                 child: Visibility(
-                                                  visible: _userRepairQuery !=
-                                                      null ||
-                                                      _isMessageWithWorker,
+                                                  visible: _userRepairQuery != null || _isMessageWithWorker,
                                                   child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        top: 21, right: 21),
+                                                    margin: EdgeInsets.only(top: 21, right: 21),
                                                     padding: EdgeInsets.all(21),
                                                     //height: 49,
                                                     width: _windowWidth * 0.77,
                                                     decoration: BoxDecoration(
                                                       color: Colors.red,
-                                                      borderRadius:
-                                                      BorderRadius.only(
-                                                        topLeft:
-                                                        Radius.circular(
-                                                            100),
-                                                        topRight:
-                                                        Radius.circular(
-                                                            100),
-                                                        bottomLeft:
-                                                        Radius.circular(
-                                                            100),
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(100),
+                                                        topRight: Radius.circular(100),
+                                                        bottomLeft: Radius.circular(100),
                                                       ),
                                                     ),
                                                     child: Text(
-                                                      '¡Hola! Hoy quiero reparar: ' +
-                                                          _userRepairQuery.text,
-                                                      style: TextStyle(
-                                                          color: Colors.white),
+                                                      '¡Hola! Hoy quiero reparar: ' + _userRepairQuery.text,
+                                                      style: TextStyle(color: Colors.white),
                                                     ),
                                                   ),
                                                 ),
@@ -1532,21 +1372,16 @@ class _AllHomepageState extends State<AllHomepage> {
                                       AnimatedContainer(
                                         duration: Duration(milliseconds: 1000),
                                         curve: Curves.fastLinearToSlowEaseIn,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 21),
-                                        margin: EdgeInsets.only(
-                                            bottom: _keyboardVisible ? 250 : 21,
-                                            top: 21),
+                                        padding: EdgeInsets.symmetric(horizontal: 21),
+                                        margin: EdgeInsets.only(bottom: _keyboardVisible ? 250 : 21, top: 21),
                                         //padding: EdgeInsets.all(21),
                                         height: 49,
                                         width: _windowWidth * 0.91,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(100),
+                                          borderRadius: BorderRadius.circular(100),
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                              Colors.grey.withOpacity(0.1),
+                                              color: Colors.grey.withOpacity(0.1),
                                               spreadRadius: 0,
                                               blurRadius: 7,
                                               offset: Offset(3, 3),
@@ -1555,8 +1390,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                           color: _darkBlue.withOpacity(0.04),
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
                                               width: _windowWidth * 0.56,
@@ -1564,31 +1398,26 @@ class _AllHomepageState extends State<AllHomepage> {
                                                 enabled: true,
                                                 decoration: InputDecoration(
                                                   border: InputBorder.none,
-                                                  hintText:
-                                                  'Escribe tu mensaje aquí...',
+                                                  hintText: 'Escribe tu mensaje aquí...',
                                                   hintStyle: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w500,
-                                                    color: _darkBlue
-                                                        .withOpacity(0.49),
+                                                    color: _darkBlue.withOpacity(0.49),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             // ATTACH ICON
                                             Container(
-                                              margin: EdgeInsets.only(
-                                                  left: _windowWidth * 0.01),
+                                              margin: EdgeInsets.only(left: _windowWidth * 0.01),
                                               child: Icon(
                                                 Icons.attach_file_rounded,
-                                                color:
-                                                _darkBlue.withOpacity(0.49),
+                                                color: _darkBlue.withOpacity(0.49),
                                               ),
                                             ),
                                             // SEND ICON
                                             Container(
-                                              margin: EdgeInsets.only(
-                                                  left: _windowWidth * 0.01),
+                                              margin: EdgeInsets.only(left: _windowWidth * 0.01),
                                               width: 28,
                                               height: 28,
                                               decoration: BoxDecoration(
@@ -1597,9 +1426,7 @@ class _AllHomepageState extends State<AllHomepage> {
                                                   Radius.circular(21),
                                                 ),
                                               ),
-                                              child: Icon(Icons.send_rounded,
-                                                  color: Colors.white,
-                                                  size: 18),
+                                              child: Icon(Icons.send_rounded, color: Colors.white, size: 18),
                                             ),
                                           ],
                                         ),
@@ -1614,10 +1441,23 @@ class _AllHomepageState extends State<AllHomepage> {
                       ],
                     ),
                     // ENCARGOS
-                    //Encargos(context),
-                    EnDesarrolloPlaceholder(coral: _coral, windowWidth: _windowWidth, windowHeight: _windowHeight, isSmallScreen: _isSmallScreen),
+                    Encargos(
+                      updateCurrentScreen: _updateCurrentScreen,
+                      currentScreen: _currentScreen,
+                      coral: _coral,
+                      darkBlue: _darkBlue,
+                      screen30XOffset: _screen30XOffset,
+                      screen31XOffset: _screen31XOffset,
+                      windowHeight: _windowHeight,
+                      windowWidth: _windowWidth,
+                      isSmallScreen: _isSmallScreen,
+                    ),
                     // PERFIL
-                    EnDesarrolloPlaceholder(coral: _coral, windowWidth: _windowWidth, windowHeight: _windowHeight, isSmallScreen: _isSmallScreen),
+                    EnDesarrolloPlaceholder(
+                        coral: _coral,
+                        windowWidth: _windowWidth,
+                        windowHeight: _windowHeight,
+                        isSmallScreen: _isSmallScreen),
                   ],
                 ),
               ),
@@ -1635,9 +1475,7 @@ class _AllHomepageState extends State<AllHomepage> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(100),
                       ),
-                      color: Theme
-                          .of(context)
-                          .scaffoldBackgroundColor,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                     ),
                     child: Container(
                       padding: EdgeInsets.only(left: 10),
@@ -1657,9 +1495,7 @@ class _AllHomepageState extends State<AllHomepage> {
             width: double.infinity,
             height: 70,
             decoration: BoxDecoration(
-              color: Theme
-                  .of(context)
-                  .scaffoldBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
               border: Border(
                 top: BorderSide(
                   color: _darkBlue.withOpacity(0.21),
@@ -1683,16 +1519,12 @@ class _AllHomepageState extends State<AllHomepage> {
                         children: [
                           Icon(
                             Icons.hardware,
-                            color: _selectedOption == 1
-                                ? _coral
-                                : _colorInactiveOption,
+                            color: _selectedOption == 1 ? _coral : _colorInactiveOption,
                           ),
                           Text(
                             'Reparar',
                             style: TextStyle(
-                              color: _selectedOption == 1
-                                  ? _coral
-                                  : _colorInactiveOption,
+                              color: _selectedOption == 1 ? _coral : _colorInactiveOption,
                             ),
                           ),
                         ],
@@ -1718,16 +1550,12 @@ class _AllHomepageState extends State<AllHomepage> {
                           children: [
                             Icon(
                               Icons.messenger_outline_rounded,
-                              color: _selectedOption == 2
-                                  ? _coral
-                                  : _colorInactiveOption,
+                              color: _selectedOption == 2 ? _coral : _colorInactiveOption,
                             ),
                             Text(
                               'Mensajes',
                               style: TextStyle(
-                                color: _selectedOption == 2
-                                    ? _coral
-                                    : _colorInactiveOption,
+                                color: _selectedOption == 2 ? _coral : _colorInactiveOption,
                               ),
                             ),
                           ],
@@ -1754,16 +1582,12 @@ class _AllHomepageState extends State<AllHomepage> {
                           children: [
                             Icon(
                               Icons.receipt_long_rounded,
-                              color: _selectedOption == 3
-                                  ? _coral
-                                  : _colorInactiveOption,
+                              color: _selectedOption == 3 ? _coral : _colorInactiveOption,
                             ),
                             Text(
                               'Encargos',
                               style: TextStyle(
-                                color: _selectedOption == 3
-                                    ? _coral
-                                    : _colorInactiveOption,
+                                color: _selectedOption == 3 ? _coral : _colorInactiveOption,
                               ),
                             ),
                           ],
@@ -1790,16 +1614,12 @@ class _AllHomepageState extends State<AllHomepage> {
                           children: [
                             Icon(
                               Icons.person_outline_rounded,
-                              color: _selectedOption == 4
-                                  ? _coral
-                                  : _colorInactiveOption,
+                              color: _selectedOption == 4 ? _coral : _colorInactiveOption,
                             ),
                             Text(
                               'Perfil',
                               style: TextStyle(
-                                color: _selectedOption == 4
-                                    ? _coral
-                                    : _colorInactiveOption,
+                                color: _selectedOption == 4 ? _coral : _colorInactiveOption,
                               ),
                             ),
                           ],

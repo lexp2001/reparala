@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,25 @@ import 'package:repara_latam/screens/app_body.dart';
 
 import 'components/login_page_text_field.dart';
 
+CameraDescription firstCamera;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Ensure that plugin services are initialized so that `availableCameras()`
+  // can be called before `runApp()`
+  WidgetsFlutterBinding.ensureInitialized();
+  // Obtain a list of the available cameras on the device.
+  final cameras = await availableCameras();
+  // Get a specific camera from the list of available cameras.
+  firstCamera = cameras.first;
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   final exampleConst = BoxShadow(
     color: Colors.grey.withOpacity(0.1),
     spreadRadius: 0,
@@ -32,8 +45,7 @@ class MyApp extends StatelessWidget {
       enableCrashReporting: true,
       enableUIEventLogging: true,
     );
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
       //debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -114,8 +126,7 @@ class _AllLoginState extends State<AllLogin> {
 
     try {
       UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: _emailController.text, password: _passwordController.text);
+          .createUserWithEmailAndPassword(email: _emailController.text, password: _passwordController.text);
 
       FirebaseAuth.instance.currentUser.sendEmailVerification().then((_) {
         print('Verification email sent');
@@ -130,14 +141,12 @@ class _AllLoginState extends State<AllLogin> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFFBFF4949),
-            content: Text('La contraseña es muy débil')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(backgroundColor: Color(0xFFBFF4949), content: Text('La contraseña es muy débil')));
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xFFBFF4949),
-            content: Text('La dirección de correo ya está en uso')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(backgroundColor: Color(0xFFBFF4949), content: Text('La dirección de correo ya está en uso')));
       }
     } catch (e) {
       print(e);
@@ -181,8 +190,7 @@ class _AllLoginState extends State<AllLogin> {
     await user.reload();
     if (user.emailVerified) {
       timer.cancel();
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => AppBody()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AppBody(camera: firstCamera)));
     }
   }
 
@@ -282,8 +290,7 @@ class _AllLoginState extends State<AllLogin> {
                 AnimatedContainer(
                   duration: Duration(milliseconds: 1000),
                   curve: Curves.fastLinearToSlowEaseIn,
-                  transform:
-                      Matrix4.translationValues(_firstScreenXOffset, 0, 0),
+                  transform: Matrix4.translationValues(_firstScreenXOffset, 0, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -306,10 +313,7 @@ class _AllLoginState extends State<AllLogin> {
                             child: Text(
                               'Conecta con individuos ansiosos por darle una segunda oportunidad a tus pertenencias',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white.withOpacity(0.77),
-                                  height: 1.5,
-                                  letterSpacing: 1.9),
+                              style: TextStyle(color: Colors.white.withOpacity(0.77), height: 1.5, letterSpacing: 1.9),
                             ),
                           ),
                           // BTN SIGN UP
@@ -340,10 +344,7 @@ class _AllLoginState extends State<AllLogin> {
                                 child: Center(
                                   child: Text(
                                     'REGISTRARSE',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 21),
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 21),
                                   ),
                                 ),
                               ),
@@ -377,10 +378,8 @@ class _AllLoginState extends State<AllLogin> {
                                 child: Center(
                                   child: Text(
                                     'ENTRAR',
-                                    style: TextStyle(
-                                        color: Color(0xFFBFF4949),
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 21),
+                                    style:
+                                        TextStyle(color: Color(0xFFBFF4949), fontWeight: FontWeight.w700, fontSize: 21),
                                   ),
                                 ),
                               ),
@@ -396,8 +395,7 @@ class _AllLoginState extends State<AllLogin> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child:
-                                Image.asset("assets/images/google_small.png"),
+                            child: Image.asset("assets/images/google_small.png"),
                           ),
                         ],
                       ),
@@ -413,8 +411,7 @@ class _AllLoginState extends State<AllLogin> {
                         ? MediaQuery.of(context).size.height * 0.54
                         : MediaQuery.of(context).size.height * 0.49,
                     width: MediaQuery.of(context).size.width * 0.91,
-                    transform:
-                        Matrix4.translationValues(_registrarseXOffset, 0, 0),
+                    transform: Matrix4.translationValues(_registrarseXOffset, 0, 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(21),
@@ -437,10 +434,7 @@ class _AllLoginState extends State<AllLogin> {
                             child: Text(
                               'Nueva Cuenta',
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 7),
+                                  color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 7),
                             ),
                           ),
                         ),
@@ -502,8 +496,7 @@ class _AllLoginState extends State<AllLogin> {
                     curve: Curves.fastLinearToSlowEaseIn,
                     height: MediaQuery.of(context).size.height * 0.91,
                     width: MediaQuery.of(context).size.width * 0.91,
-                    transform:
-                        Matrix4.translationValues(_terminosXOffset, 0, 0),
+                    transform: Matrix4.translationValues(_terminosXOffset, 0, 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(21),
@@ -527,10 +520,7 @@ class _AllLoginState extends State<AllLogin> {
                               'Términos de Servicio',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 7),
+                                  color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 7),
                             ),
                           ),
                         ),
@@ -538,8 +528,7 @@ class _AllLoginState extends State<AllLogin> {
                         Expanded(
                           child: Container(
                             //height: 50,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 35, vertical: 21),
+                            padding: EdgeInsets.symmetric(horizontal: 35, vertical: 21),
                             child: Column(
                               children: [
                                 Expanded(
@@ -566,8 +555,7 @@ class _AllLoginState extends State<AllLogin> {
                                       Flexible(
                                         child: Container(
                                           width: 210,
-                                          child: Text(
-                                              'He leído y acepto los términos y condiciones de uso.'),
+                                          child: Text('He leído y acepto los términos y condiciones de uso.'),
                                         ),
                                       ),
                                     ],
@@ -577,18 +565,14 @@ class _AllLoginState extends State<AllLogin> {
                                 // BTN SIGUIENTE
                                 Container(
                                   child: GestureDetector(
-                                    onTap: !_isToSChecked
-                                        ? null
-                                        : () => onClickSignUpTerminos(),
+                                    onTap: !_isToSChecked ? null : () => onClickSignUpTerminos(),
                                     child: Container(
                                       //margin: EdgeInsets.symmetric(vertical: 14, horizontal: 56),
                                       padding: EdgeInsets.all(21),
                                       height: 70,
-                                      width: MediaQuery.of(context).size.width /
-                                          1.4,
+                                      width: MediaQuery.of(context).size.width / 1.4,
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
+                                        borderRadius: BorderRadius.circular(100),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.grey.withOpacity(0.1),
@@ -597,17 +581,13 @@ class _AllLoginState extends State<AllLogin> {
                                             offset: Offset(3, 3),
                                           )
                                         ],
-                                        color: !_isToSChecked
-                                            ? Colors.grey
-                                            : Color(0xFFBFF4949),
+                                        color: !_isToSChecked ? Colors.grey : Color(0xFFBFF4949),
                                       ),
                                       child: Center(
                                         child: Text(
                                           'SIGUIENTE',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 21),
+                                          style:
+                                              TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 21),
                                         ),
                                       ),
                                     ),
@@ -628,8 +608,7 @@ class _AllLoginState extends State<AllLogin> {
                     curve: Curves.fastLinearToSlowEaseIn,
                     height: MediaQuery.of(context).size.height * 0.5,
                     width: MediaQuery.of(context).size.width * 0.91,
-                    transform:
-                        Matrix4.translationValues(_validacionXOffset, 0, 0),
+                    transform: Matrix4.translationValues(_validacionXOffset, 0, 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(21),
@@ -653,10 +632,7 @@ class _AllLoginState extends State<AllLogin> {
                               'Aguardando Validación',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 7),
+                                  color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 7),
                             ),
                           ),
                         ),
@@ -706,10 +682,9 @@ class _AllLoginState extends State<AllLogin> {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              auth.signInAnonymously().then((value) =>
-                                  Navigator.of(context).pushReplacement(
+                              auth.signInAnonymously().then((value) => Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) => AppBody(),
+                                      builder: (context) => AppBody(camera: firstCamera),
                                     ),
                                   ));
                             },
@@ -717,10 +692,7 @@ class _AllLoginState extends State<AllLogin> {
                               child: Text(
                                 '¡Bienvenido!',
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 7),
+                                    color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 7),
                               ),
                             ),
                           ),
@@ -778,14 +750,10 @@ class _AllLoginState extends State<AllLogin> {
                                     onTap: () {
                                       auth
                                           .signInWithEmailAndPassword(
-                                              email: _emailController.text,
-                                              password:
-                                                  _passwordController.text)
+                                              email: _emailController.text, password: _passwordController.text)
                                           .then((value) {
                                         Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AppBody()));
+                                            MaterialPageRoute(builder: (context) => AppBody(camera: firstCamera)));
                                       });
                                     },
                                     child: PrimaryButton(
@@ -806,12 +774,9 @@ class _AllLoginState extends State<AllLogin> {
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.fastLinearToSlowEaseIn,
-                    height: _isSmallScreen
-                        ? _windowHeight * 0.54
-                        : _windowHeight * 0.38,
+                    height: _isSmallScreen ? _windowHeight * 0.54 : _windowHeight * 0.38,
                     width: MediaQuery.of(context).size.width * 0.91,
-                    transform:
-                        Matrix4.translationValues(_recuperarXOffset, 0, 0),
+                    transform: Matrix4.translationValues(_recuperarXOffset, 0, 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(21),
@@ -833,10 +798,9 @@ class _AllLoginState extends State<AllLogin> {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              auth.signInAnonymously().then((value) =>
-                                  Navigator.of(context).pushReplacement(
+                              auth.signInAnonymously().then((value) => Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) => AppBody(),
+                                      builder: (context) => AppBody(camera: firstCamera),
                                     ),
                                   ));
                             },
@@ -845,10 +809,7 @@ class _AllLoginState extends State<AllLogin> {
                                 'Recuperar Contraseña',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 7),
+                                    color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 7),
                               ),
                             ),
                           ),
@@ -867,10 +828,7 @@ class _AllLoginState extends State<AllLogin> {
                                   child: Text(
                                     'Introduce la dirección de correo con la cual te registraste',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFFB021028)
-                                            .withOpacity(0.70)),
+                                    style: TextStyle(fontSize: 14, color: Color(0xFFB021028).withOpacity(0.70)),
                                   ),
                                 ),
                                 InputWithIcon(
@@ -889,24 +847,18 @@ class _AllLoginState extends State<AllLogin> {
                                   margin: EdgeInsets.only(bottom: 21),
                                   child: GestureDetector(
                                     onTap: () {
-                                      auth.sendPasswordResetEmail(
-                                          email: _emailController.text);
+                                      auth.sendPasswordResetEmail(email: _emailController.text);
                                       FocusScope.of(context).unfocus();
 
                                       setState(() {
                                         _pageState = 20;
                                       });
 
-                                      new Future.delayed(
-                                          const Duration(seconds: 1), () {
+                                      new Future.delayed(const Duration(seconds: 1), () {
                                         // deleayed code here
                                         //print('delayed execution');
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                backgroundColor:
-                                                    Color(0xFFBFF4949),
-                                                content:
-                                                    Text('Email enviado')));
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            backgroundColor: Color(0xFFBFF4949), content: Text('Email enviado')));
                                       });
                                     },
                                     child: PrimaryButton(
@@ -960,8 +912,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       child: Center(
         child: Text(
           widget.btnText,
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.w700, fontSize: 21),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 21),
         ),
       ),
     );
