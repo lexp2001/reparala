@@ -42,11 +42,7 @@ class AllHomepage extends StatefulWidget {
   final CameraDescription camera;
   final String imagePath;
 
-  const AllHomepage({
-    Key key,
-    @required this.camera,
-    @required this.imagePath
-  }) : super(key: key);
+  const AllHomepage({Key key, @required this.camera, @required this.imagePath}) : super(key: key);
 
   @override
   _AllHomepageState createState() => _AllHomepageState();
@@ -57,7 +53,7 @@ List<Marker> allMarkersRenderd = [];
 
 class _AllHomepageState extends State<AllHomepage> {
   final auth = FirebaseAuth.instance;
-
+  String imgPath;
   Set<Marker> _markers = HashSet<Marker>();
   GoogleMapController _mapController;
   BitmapDescriptor _markerIcon;
@@ -629,14 +625,17 @@ class _AllHomepageState extends State<AllHomepage> {
                                     ),
                                     // TAKE PICTURE
                                     GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
+                                      onTap: () async {
+                                        final image = await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => TakePictureScreen(
                                                     camera: selectedCamera,
                                                   )),
                                         );
+                                        setState(() {
+                                          imgPath = image;
+                                        });
                                         //_openCamera(context);
                                         //print('Take picture clicked');
                                       },
@@ -650,12 +649,12 @@ class _AllHomepageState extends State<AllHomepage> {
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: _coral, width: 2),
                                               ),
-                                              child: imagePath == null
+                                              child: imgPath == null
                                                   ? Image.asset("assets/images/boots_square_compressed.png")
-                                                  : Image.file(File(imagePath))),
-                                              // child: _filePictureFromCamera == null
-                                              //     ? Image.asset("assets/images/boots_square_compressed.png")
-                                              //     : Image.file(File(_filePictureFromCamera.path))),
+                                                  : Image.file(File(imgPath))),
+                                          // child: _filePictureFromCamera == null
+                                          //     ? Image.asset("assets/images/boots_square_compressed.png")
+                                          //     : Image.file(File(_filePictureFromCamera.path))),
                                           Align(
                                             alignment: Alignment.bottomCenter,
                                             child: Container(

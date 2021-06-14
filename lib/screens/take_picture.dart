@@ -77,7 +77,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
             final image = await _controller.takePicture();
 
             // If the picture was taken, display it on a new screen.
-            Navigator.pop(context);
+            Navigator.pop(context, image.path);
           } catch (e) {
             // If an error occurs, log the error to the console.
             print(e);
