@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.repara_latam">
    <application
-        android:label="Repara Latam (a1.3)"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Repara Latam a1.8"
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -42,4 +43,13 @@
            android:value="AIzaSyD5fUh2XLZISGTgXrU7fTFyWrqRvg5oC-k"/>
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:required="false" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false" />
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
+
 </manifest>
