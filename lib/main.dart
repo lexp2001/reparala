@@ -29,7 +29,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   final exampleConst = BoxShadow(
     color: Colors.grey.withOpacity(0.1),
     spreadRadius: 0,
@@ -311,7 +310,7 @@ class _AllLoginState extends State<AllLogin> {
                           Container(
                             width: 190,
                             child: Text(
-                              'Conecta con individuos ansiosos por darle una segunda oportunidad a tus pertenencias',
+                              'Conecta con individuos ansiosos por darle una segunda oportunidad a tus pertenencias.',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white.withOpacity(0.77), height: 1.5, letterSpacing: 1.9),
                             ),
@@ -682,11 +681,14 @@ class _AllLoginState extends State<AllLogin> {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              auth.signInAnonymously().then((value) => Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => AppBody(camera: firstCamera),
-                                    ),
-                                  ));
+                              // auth.signInAnonymously().then((value) => Navigator.of(context).pushReplacement(
+                              //       MaterialPageRoute(
+                              //         builder: (context) => AppBody(camera: firstCamera),
+                              //       ),
+                              //     ));
+                              MaterialPageRoute(
+                                builder: (context) => AppBody(camera: firstCamera),
+                              );
                             },
                             child: Center(
                               child: Text(
